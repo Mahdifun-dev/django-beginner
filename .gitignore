@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python,django,vagrant
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,django,vagrant
+# Created by https://www.toptal.com/developers/gitignore/api/python,django
+# Edit at https://www.toptal.com/developers/gitignore?templates=python,django
 
 ### Django ###
 *.log
@@ -263,14 +263,4 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
-### Vagrant ###
-# General
-.vagrant/
-
-# Log files (if you are creating logs in debug mode, uncomment this)
-# *.log
-
-### Vagrant Patch ###
-*.box
-
-# End of https://www.toptal.com/developers/gitignore/api/python,django,vagrant
+# End of https://www.toptal.com/developers/gitignore/api/python,django
