@@ -1,0 +1,12 @@
+<h1>Educational Resources</h1>
+<ul>
+    {% for res in resources %}
+        <li>
+            <strong>{{ res.title }}</strong> - {{ res.category.name }} <br>
+            {{ res.description }} <br>
+            <a href="{{ res.file.url }}">Download</a>
+        </li>
+    {% empty %}
+        <li>No resources found.</li>
+    {% endfor %}
+</ul>

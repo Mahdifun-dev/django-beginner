@@ -1,0 +1,11 @@
+{% extends 'base.html' %} {# Assuming you have a base.html template, adjust if not #}
+
+{% block content %}
+  <h2>Upload New Resource</h2>
+  <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }} {# Render the form fields as paragraphs #}
+      <button type="submit">Upload</button>
+  </form>
+  <p><a href="{% url 'resource_list' %}">Cancel</a></p>
+{% endblock %}
