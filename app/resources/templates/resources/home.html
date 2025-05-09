@@ -6,11 +6,9 @@
 <body>
     <h1>Welcome to the Educational Resource Sharing Platform</h1>
 
-    <h3><a href="{% url 'resource_list' %}">Resources</a></h3>
-
+    <h3><a href="{% url 'resource_list' %}">Resource list</a></h3>
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}! <a href="{% url 'logout' %}">Logout</a></p>
-        <a href="{% url 'resource_list' %}">Resource list</a>
     {% else %}
         <p><a href="{% url 'login' %}">Login</a> | <a href="{% url 'signup' %}">Sign up</a></p>
     {% endif %}

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>تأیید حذف</title>
+</head>
+<body>
+  <h2>آیا از حذف این منبع مطمئن هستید؟</h2>
+  <p><strong>{{ resource.title }}</strong></p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">بله، حذف کن</button>
+    <a href="{% url 'resource_detail' resource.pk %}">خیر، بازگشت</a>
+  </form>
+</body>
+</html>

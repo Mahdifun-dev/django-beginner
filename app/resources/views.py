@@ -86,3 +86,12 @@ def edit_resource(request, pk):
         request, "app/edit_resource.html", {"form": form, "resource": resource}
     )
 
+@login_required
+def delete_resource(request, pk):
+    resource = get_object_or_404(Resource, pk=pk)
+    if resource.uploader != request.user:
+        return HttpResponseForbidden("شما اجازهٔ حذف این منبع را ندارید.")
+    if request.method == 'POST':
+        resource.delete()
+        return redirect('resource_list')
+    return render(request, 'app/confirm_delete.html', {'resource': resource})

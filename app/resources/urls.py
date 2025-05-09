@@ -11,4 +11,5 @@ urlpatterns = [
     path("upload/", views.upload_resource, name="upload_resource"),
     path('resource/<int:pk>/', views.resource_detail, name='resource_detail'),
     path('resource/<int:pk>/edit/', views.edit_resource, name='edit_resource'),
+    path('resource/<int:pk>/delete/', views.delete_resource, name='delete_resource'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)   
