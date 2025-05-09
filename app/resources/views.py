@@ -46,28 +46,29 @@ def upload_resource(request):
 
 # resource details
 def resource_detail(request, pk):
-    resource = Resource.objects.get(pk=pk)
-    comments = resource.comments.all().order_by("-created_at")
+    resource = get_object_or_404(Resource, pk=pk)
+    comments = resource.comments.all().order_by('-created_at')
 
-    if request.method == "POST":
-        if request.user.is_authenticated:
-            form = CommentForm(request.POST)
-            if form.is_valid():
-                comment = form.save(commit=False)
-                comment.resource = resource
-                comment.author = request.user
-                comment.save()
-                return redirect("resource_detail", pk=pk)
-        else:
-            return redirect("login")
+    # ارسال کامنت فقط اگر POST و کاربر لاگین باشد
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect('login')  # یا include next param: ?next={{ request.path }}
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.resource = resource
+            comment.user = request.user
+            comment.save()
+            return redirect('resources/resource_detail', pk=pk)
     else:
         form = CommentForm()
 
-    return render(
-        request,
-        "resources/resource_detail.html",
-        {"resource": resource, "comments": comments, "form": form},
-    )
+    return render(request, 'resources/resource_detail.html', {
+        'resource': resource,
+        'comments': comments,
+        'form': form
+    })
+
 
 
 @login_required
@@ -83,7 +84,7 @@ def edit_resource(request, pk):
     else:
         form = ResourceForm(instance=resource)
     return render(
-        request, "app/edit_resource.html", {"form": form, "resource": resource}
+        request, "resources/edit_resource.html", {"form": form, "resource": resource}
     )
 
 @login_required
@@ -94,4 +95,4 @@ def delete_resource(request, pk):
     if request.method == 'POST':
         resource.delete()
         return redirect('resource_list')
-    return render(request, 'app/confirm_delete.html', {'resource': resource})
+    return render(request, 'resources/confirm_delete.html', {'resource': resource})
