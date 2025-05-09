@@ -14,7 +14,7 @@
 <h3>Comments</h3>
 {% for comment in comments %}
     <div>
-        <strong>{{ comment.author.username }}</strong> ({{ comment.created_at|date:"Y-m-d H:i" }}):
+        <strong>{{ comment.user.username }}</strong> ({{ comment.created_at|date:"Y-m-d H:i" }}):
         <p>{{ comment.text }}</p>
     </div>
 {% empty %}

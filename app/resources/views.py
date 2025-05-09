@@ -59,7 +59,7 @@ def resource_detail(request, pk):
             comment.resource = resource
             comment.user = request.user
             comment.save()
-            return redirect('resources/resource_detail', pk=pk)
+            return redirect('resource_detail', pk=pk)
     else:
         form = CommentForm()
 
