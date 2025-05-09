@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from .models import Resource
-from .forms import ResourceForm
+from .forms import ResourceForm, CommentForm
 
 
 
@@ -28,6 +28,7 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 
+# resource upload
 @login_required
 def upload_resource(request):
     if request.method == 'POST':
@@ -40,3 +41,28 @@ def upload_resource(request):
     else:
         form = ResourceForm()
     return render(request, 'resources/upload_resource.html', {'form': form})
+
+# resource details
+def resource_detail(request, pk):
+    resource = Resource.objects.get(pk=pk)
+    comments = resource.comments.all().order_by('-created_at')
+
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.resource = resource
+                comment.author = request.user
+                comment.save()
+                return redirect('resource_detail', pk=pk)
+        else:
+            return redirect('login')
+    else:
+        form = CommentForm()
+
+    return render(request, 'resources/resource_detail.html', {
+        'resource': resource,
+        'comments': comments,
+        'form': form
+    })
