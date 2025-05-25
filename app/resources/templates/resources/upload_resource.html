@@ -1,3 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+
 <h2>Upload Resource</h2>
 
 <form method="post" enctype="multipart/form-data">
@@ -7,3 +14,5 @@
 </form>
 
 <p><a href="{% url 'home' %}">Back to home</a></p>
+
+{% endblock %}

@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1.4
 
 FROM --platform=$BUILDPLATFORM python:3.12.10-alpine3.21 AS builder
 EXPOSE 8000

@@ -1,33 +1,43 @@
-<h2>{{ resource.title }}</h2>
-<p>{{ resource.description }}</p>
-<a href="{{ resource.file.url }}">Download</a>
+{% extends "base.html" %}
 
-{% if user == resource.uploader %}
-  <a href="{% url 'edit_resource' resource.pk %}">ویرایش</a>
-  <form action="{% url 'delete_resource' resource.pk %}" method="post" style="display:inline;">
-    {% csrf_token %}
-    <button type="submit">حذف</button>
-  </form>
-{% endif %}
+{% block title %}Home{% endblock %}
 
+{% block content %}
 
-<h3>Comments</h3>
-{% for comment in comments %}
+    
+    <h2>{{ resource.title }}</h2>
+    <p>{{ resource.description }}</p>
+    <a href="{{ resource.file.url }}">Download</a>
+    
+    {% if user == resource.uploader %}
+    <a href="{% url 'edit_resource' resource.pk %}">ویرایش</a>
+    <form action="{% url 'delete_resource' resource.pk %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">حذف</button>
+    </form>
+    {% endif %}
+    
+    
+    <h3>Comments</h3>
+    {% for comment in comments %}
     <div>
         <strong>{{ comment.user.username }}</strong> ({{ comment.created_at|date:"Y-m-d H:i" }}):
         <p>{{ comment.text }}</p>
     </div>
-{% empty %}
+    {% empty %}
     <p>No comments yet.</p>
-{% endfor %}
-
-{% if user.is_authenticated %}
+    {% endfor %}
+    
+    {% if user.is_authenticated %}
     <h4>Add a comment</h4>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Post Comment</button>
     </form>
-{% else %}
+    {% else %}
     <p><a href="{% url 'login' %}">Login</a> to post a comment.</p>
-{% endif %}
+    {% endif %}
+    
+
+{% endblock %}

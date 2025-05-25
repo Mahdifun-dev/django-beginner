@@ -1,12 +1,22 @@
-<h1>Educational Resources</h1>
-<ul>
-    {% for res in resources %}
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+    
+    <h1>Educational Resources</h1>
+    <ul>
+        {% for res in resources %}
         <li>
             <strong>{{ res.title }}</strong> - {{ res.category.name }} <br>
             {{ res.description }} <br>
             <a href="{% url 'resource_detail' res.pk %}">View Details</a>
         </li>
-    {% empty %}
+        {% empty %}
         <li>No resources found.</li>
-    {% endfor %}
-</ul>
+        {% endfor %}
+    </ul>
+
+    
+{% endblock %}

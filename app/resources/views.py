@@ -36,7 +36,7 @@ def upload_resource(request):
         form = ResourceForm(request.POST, request.FILES)
         if form.is_valid():
             resource = form.save(commit=False)
-            resource.uploaded_by = request.user
+            resource.uploader = request.user 
             resource.save()
             return redirect("home")
     else:
