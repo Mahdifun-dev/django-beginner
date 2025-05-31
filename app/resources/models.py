@@ -31,3 +31,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.user.username} on {self.resource.title}'
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    resource = models.ForeignKey('Resource', on_delete=models.CASCADE, related_name='likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'resource')  # جلوگیری از لایک تکراری
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.resource.title}"
