@@ -39,7 +39,7 @@ class Like(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'resource')  # جلوگیری از لایک تکراری
+        unique_together = ('user', 'resource')
 
     def __str__(self):
         return f"{self.user.username} likes {self.resource.title}"

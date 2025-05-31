@@ -7,6 +7,17 @@
     <p class="mb-2 text-gray-600"><strong>Category:</strong> {{ resource.category.name }}</p>
     <p class="mb-4">{{ resource.description }}</p>
     <a href="{{ resource.file.url }}" class="text-blue-600 hover:underline">Download File</a>
+    <form method="post" class="inline-block ml-4">
+    {% csrf_token %}
+    <button type="submit" name="like_submit" class="text-pink-500 hover:text-pink-600 text-lg">
+        {% if liked %}
+            ❤️ Liked
+        {% else %}
+            🤍 Like
+        {% endif %}
+        ({{ resource.likes.count }})
+    </button>
+    </form>
     {% if user == resource.uploader %}
     <div class="mt-4 flex gap-4">
         <a href="{% url 'edit_resource' resource.pk %}"

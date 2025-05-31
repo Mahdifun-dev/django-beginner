@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .models import Resource
+from .models import Resource, Like
 from .forms import ResourceForm, CommentForm
 from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponseForbidden
@@ -44,21 +44,32 @@ def upload_resource(request):
     return render(request, "resources/upload_resource.html", {"form": form})
 
 
-# resource details
 def resource_detail(request, pk):
     resource = get_object_or_404(Resource, pk=pk)
     comments = resource.comments.all().order_by('-created_at')
+    liked = False
 
-    # ارسال کامنت فقط اگر POST و کاربر لاگین باشد
+    if request.user.is_authenticated:
+        liked = resource.likes.filter(user=request.user).exists()
+
     if request.method == 'POST':
         if not request.user.is_authenticated:
-            return redirect('login')  # یا include next param: ?next={{ request.path }}
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.resource = resource
-            comment.user = request.user
-            comment.save()
+            return redirect('login')
+
+        if 'comment_submit' in request.POST:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.resource = resource
+                comment.user = request.user
+                comment.save()
+                return redirect('resource_detail', pk=pk)
+
+        elif 'like_submit' in request.POST:
+            if liked:
+                resource.likes.filter(user=request.user).delete()
+            else:
+                Like.objects.create(user=request.user, resource=resource)
             return redirect('resource_detail', pk=pk)
     else:
         form = CommentForm()
@@ -66,8 +77,10 @@ def resource_detail(request, pk):
     return render(request, 'resources/resource_detail.html', {
         'resource': resource,
         'comments': comments,
-        'form': form
+        'form': form,
+        'liked': liked,
     })
+
 
 
 
