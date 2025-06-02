@@ -1,18 +1,136 @@
 {% extends 'base.html' %}
-{% block title %}Resources{% endblock %}
+{% block title %}EduShare – Educational Resources{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-semibold mb-6">Educational Resources</h2>
-<ul class="space-y-4">
-    {% for res in resources %}
-        <li class="bg-white p-4 rounded shadow">
-            <h3 class="text-xl font-bold">{{ res.title }}</h3>
-            <p class="text-gray-600">{{ res.category.name }}</p>
-            <p class="mt-2">{{ res.description }}</p>
-            <a href="{% url 'resource_detail' res.pk %}" class="text-blue-500 hover:underline">View Details</a>
-        </li>
-    {% empty %}
-        <li>No resources found.</li>
-    {% endfor %}
-</ul>
+  <!-- Hero Section -->
+  <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-10 p-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">Welcome to EduShare</h1>
+      <p class="text-gray-600 dark:text-gray-300 mb-6">
+        Discover, Share, and Learn from a variety of educational resources uploaded by students like you.
+      </p>
+      {% if user.is_authenticated %}
+        <a href="{% url 'upload_resource' %}"
+           class="inline-block bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+          Upload Your Resource
+        </a>
+      {% else %}
+        <a href="{% url 'signup' %}"
+           class="inline-block bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+          Get Started (Sign Up)
+        </a>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Search / Filter Bar (اختیاری) -->
+  <section class="mb-8">
+    <form method="get" action="{% url 'resource_list' %}" class="max-w-3xl mx-auto flex items-center space-x-2">
+      <input type="text" name="q"
+             value="{{ request.GET.q|default:'' }}"
+             placeholder="Search by title or tag..."
+             class="flex-grow border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-100"
+      />
+      <button type="submit"
+              class="bg-primary hover:bg-primary-dark text-white font-semibold px-4 py-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+        Search
+      </button>
+    </form>
+  </section>
+
+  <!-- Resources Grid -->
+  <section class="max-w-7xl mx-auto">
+    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-6">Latest Resources</h2>
+    {% if resources %}
+      <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {% for res in resources %}
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition overflow-hidden">
+            <!-- اگر تصویری برای هر منبع دارید می‌توانید در اینجا جایگزین کنید -->
+            <!-- <img src="{{ res.thumbnail_url }}" alt="{{ res.title }}" class="w-full h-40 object-cover"> -->
+
+            <div class="p-5 flex flex-col h-full">
+              <!-- Category Badge -->
+              <span class="self-start bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-xs font-medium uppercase tracking-wide px-3 py-1 rounded-full mb-3">
+                {{ res.category.name }}
+              </span>
+
+              <!-- عنوان -->
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2 line-clamp-2">
+                {{ res.title }}
+              </h3>
+
+              <!-- توضیحات کوتاه با truncate به دو خط -->
+              <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
+                {{ res.description }}
+              </p>
+
+              <!-- Metadata (اختیاری) -->
+              <div class="mt-auto flex items-center justify-between text-gray-500 dark:text-gray-400 text-xs">
+                <!-- اگر فیلد uploader و تاریخ رو می‌خواید نمایش بدید -->
+                <div class="flex items-center space-x-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M5.121 17.804A9.002 9.002 0 015.7 12M4 12a8 8 0 1113.673 5.306M12 4v4m0 0l-1-1m1 1l1-1" />
+                  </svg>
+                  <span>{{ res.uploaded_at|date:"Y/m/d" }}</span>
+                </div>
+                <div class="flex items-center space-x-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 5a2 2 0 012-2h4a2 2 0 012 2v3H4a2 2 0 00-2 2v4h3V8h3V5H4a2 2 0 00-2-2z" />
+                    <path d="M13 7l-1.293-1.293a1 1 0 011.414-1.414L16 6.586V4a2 2 0 10-4 0v3z" />
+                    <path d="M16 15v-3h-3v3H8a2 2 0 100 4h8a2 2 0 000-4h-1z" />
+                  </svg>
+                  <span>{{ res.uploader.username }}</span>
+                </div>
+              </div>
+
+              <!-- Call-to-Action Button -->
+              <a href="{% url 'resource_detail' res.pk %}"
+                 class="mt-4 inline-block bg-primary hover:bg-primary-dark text-white text-sm font-medium py-2 px-4 rounded-lg text-center transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                View Details
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pagination (در صورت استفاده از Paginator) -->
+      {% if resources.has_other_pages %}
+        <div class="mt-8 flex justify-center">
+          <nav class="inline-flex -space-x-px">
+            {% if resources.has_previous %}
+              <a href="?page={{ resources.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                 class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-l">
+                ‹
+              </a>
+            {% else %}
+              <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-600 rounded-l cursor-not-allowed">‹</span>
+            {% endif %}
+
+            {% for num in resources.paginator.page_range %}
+              {% if resources.number == num %}
+                <span aria-current="page"
+                      class="px-3 py-1 bg-primary text-white border border-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">{{ num }}</span>
+              {% else %}
+                <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                   class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {% if resources.has_next %}
+              <a href="?page={{ resources.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                 class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-r">
+                ›
+              </a>
+            {% else %}
+              <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-600 rounded-r cursor-not-allowed">›</span>
+            {% endif %}
+          </nav>
+        </div>
+      {% endif %}
+
+    {% else %}
+      <p class="text-center text-gray-500 dark:text-gray-400">No resources found.</p>
+    {% endif %}
+  </section>
 {% endblock %}

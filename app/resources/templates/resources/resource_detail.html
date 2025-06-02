@@ -1,58 +1,130 @@
 {% extends 'base.html' %}
-{% block title %}Resource Details{% endblock %}
+{% block title %}{{ resource.title }}{% endblock %}
 
 {% block content %}
-<div class="bg-white p-6 rounded shadow-md">
-    <h2 class="text-2xl font-bold mb-4">{{ resource.title }}</h2>
-    <p class="mb-2 text-gray-600"><strong>Category:</strong> {{ resource.category.name }}</p>
-    <p class="mb-4">{{ resource.description }}</p>
-    <a href="{{ resource.file.url }}" class="text-blue-600 hover:underline">Download File</a>
-    <form method="post" class="inline-block ml-4">
-    {% csrf_token %}
-    <button type="submit" name="like_submit" class="text-pink-500 hover:text-pink-600 text-lg">
-        {% if liked %}
-            ❤️ Liked
-        {% else %}
-            🤍 Like
-        {% endif %}
-        ({{ resource.likes.count }})
-    </button>
-    </form>
-    {% if user == resource.uploader %}
-    <div class="mt-4 flex gap-4">
-        <a href="{% url 'edit_resource' resource.pk %}"
-        class="inline-block px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500 transition">
-            ✏️ Edit
-        </a>
-        <a href="{% url 'delete_resource' resource.pk %}"
-        class="inline-block px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
-            🗑️ Delete
-        </a>
+<div class="max-w-4xl mx-auto px-4 py-8 space-y-10">
+
+  <!-- عنوان + وضعیت -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold leading-tight">{{ resource.title }}</h1>
+    <span class="text-sm px-3 py-1 rounded-full font-semibold
+                 {% if resource.is_approved %}
+                   bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-100
+                 {% else %}
+                   bg-orange-100 text-orange-700 dark:bg-orange-800 dark:text-orange-100
+                 {% endif %}">
+      {% if resource.is_approved %}تأیید شده{% else %}در انتظار تأیید{% endif %}
+    </span>
+  </div>
+
+  <!-- متادیتا -->
+  <div class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+    <div>آپلود شده توسط: <span class="font-medium">{{ resource.uploader.username }}</span></div>
+    <div>دسته‌بندی: 
+      <span class="inline-block px-2 py-0.5 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded text-xs">
+        {{ resource.category.name }}
+      </span>
     </div>
-{% endif %}
+    <div>تاریخ آپلود: {{ resource.created_at|date:"Y/m/d" }}</div>
+    {% if resource.tags.exists %}
+      <div>
+        تگ‌ها:
+        {% for tag in resource.tags.all %}
+          <span class="text-blue-600 dark:text-blue-300">#{{ tag.name }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- توضیحات -->
+  <div class="prose prose-sm sm:prose-lg dark:prose-invert max-w-none leading-relaxed">
+    <p>{{ resource.description|linebreaks }}</p>
+  </div>
+
+  <!-- دکمه‌ها -->
+  <div class="flex flex-wrap gap-4 items-center">
+    {% if resource.is_approved and resource.file %}
+      <a href="{{ resource.file.url }}" download
+         class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow-sm transition">
+        دانلود فایل
+      </a>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      <!-- دکمه لایک -->
+      <form method="post" action="{% url 'toggle_like' resource.pk %}">
+        {% csrf_token %}
+        <button type="submit"
+                class="flex items-center gap-1 text-pink-600 hover:text-pink-700 transition group">
+          <svg class="w-5 h-5 group-hover:scale-110 transition" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.657l-6.828-6.829a4 4 0 010-5.656z" />
+          </svg>
+          <span class="text-sm">{{ resource.likes.count }} لایک</span>
+        </button>
+      </form>
+    {% endif %}
+
+    {% if user == resource.uploader or user.is_superuser %}
+      <a href="{% url 'resource_edit' resource.pk %}"
+         class="text-yellow-600 hover:text-yellow-700 text-sm">ویرایش</a>
+      <form method="post" action="{% url 'resource_delete' resource.pk %}" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="text-red-500 hover:text-red-600 text-sm">حذف</button>
+      </form>
+    {% endif %}
+
+    {% if user.is_superuser and not resource.is_approved %}
+      <form method="post" action="{% url 'resource_approve' resource.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-1 px-3 rounded text-sm">
+          تأیید منبع
+        </button>
+      </form>
+    {% endif %}
+  </div>
+
+  <!-- نظرات -->
+  <section class="space-y-6">
+    <h2 class="text-xl font-semibold">نظرات</h2>
+
+    {% if user.is_authenticated %}
+    <form method="post" class="space-y-2">
+      {% csrf_token %}
+      {{ comment_form.as_p }}
+      <button type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded transition">
+        ارسال نظر
+      </button>
+    </form>
+    {% else %}
+      <p class="text-sm text-gray-500">برای ارسال نظر لطفاً وارد شوید.</p>
+    {% endif %}
+
+    <div class="space-y-4">
+      {% for comment in comments %}
+        <div class="bg-gray-100 dark:bg-gray-700 rounded p-3">
+          <div class="text-sm text-gray-800 dark:text-white font-semibold">{{ comment.user.username }}</div>
+          <p class="text-gray-700 dark:text-gray-200 text-sm">{{ comment.text }}</p>
+        </div>
+      {% empty %}
+        <p class="text-sm text-gray-500">هنوز نظری ثبت نشده است.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- منابع مرتبط -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">منابع مرتبط</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {% for related in related_resources %}
+        <div class="bg-white dark:bg-gray-800 rounded shadow-sm p-4 border border-gray-100 dark:border-gray-600">
+          <h3 class="font-semibold text-lg truncate">{{ related.title }}</h3>
+          <div class="text-sm text-gray-500 dark:text-gray-300">{{ related.category.name }}</div>
+          <a href="{% url 'resource_detail' related.pk %}" class="text-blue-600 dark:text-blue-300 text-sm hover:underline">مشاهده</a>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
 
 </div>
-<h3 class="text-xl mt-8 mb-4 font-semibold">Comments</h3>
-<ul class="space-y-2">
-    {% for comment in comments %}
-        <li class="bg-gray-100 p-3 rounded">
-            <p class="text-sm text-gray-600">
-                {{ comment.user.username }} said:
-            </p>
-            <p>{{ comment.text }}</p>
-        </li>
-    {% empty %}
-        <li>No comments yet.</li>
-    {% endfor %}
-</ul>
-
-{% if user.is_authenticated %}
-<form method="post" class="mt-6 space-y-4">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Add Comment</button>
-</form>
-{% else %}
-<p class="text-center mt-4 text-gray-500">You must be logged in to comment.</p>
-{% endif %}
 {% endblock %}

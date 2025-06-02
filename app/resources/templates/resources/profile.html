@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}پروفایل من{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+  <!-- Greeting Section -->
+  <section class="bg-white rounded-2xl shadow p-6 mb-8 flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800">سلام {{ user.username }} 👋</h2>
+      <p class="text-gray-500 mt-1">{{ user.email }}</p>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-xl shadow p-4 text-center">
+      <div class="text-xl font-bold text-primary">{{ my_resources.count }}</div>
+      <div class="text-sm text-gray-600 mt-1">منابع من</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4 text-center">
+      <div class="text-xl font-bold text-primary">{{ likes_count }}</div>
+      <div class="text-sm text-gray-600 mt-1">لایک‌ شده</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4 text-center">
+      <div class="text-xl font-bold text-primary">{{ comments_count }}</div>
+      <div class="text-sm text-gray-600 mt-1">نظرات</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4 text-center">
+      <div class="text-xl font-bold text-primary">{{ pending_count }}</div>
+      <div class="text-sm text-yellow-600 mt-1">در انتظار تأیید</div>
+    </div>
+  </section>
+
+  <!-- My Resources Section -->
+  <section>
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-semibold">منابع آپلود شده</h3>
+      <a href="{% url 'upload_resource' %}" class="text-sm text-primary hover:underline">+ منبع جدید</a>
+    </div>
+
+    {% if my_resources %}
+      <ul class="grid md:grid-cols-2 gap-4">
+        {% for res in my_resources %}
+          <li class="bg-white rounded-xl shadow p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="text-lg font-bold text-gray-800">{{ res.title }}</h4>
+                <div class="text-sm text-gray-500">{{ res.category.name }}</div>
+              </div>
+              <span class="text-xs px-2 py-1 rounded 
+                          {% if res.is_approved %}
+                            bg-green-100 text-green-700
+                          {% else %}
+                            bg-yellow-100 text-yellow-700
+                          {% endif %}">
+                {% if res.is_approved %}تأیید شده{% else %}در انتظار{% endif %}
+              </span>
+            </div>
+            <p class="text-gray-600 mt-2 line-clamp-2">{{ res.description }}</p>
+            <div class="flex justify-end items-center space-x-2 mt-4">
+              <a href="{% url 'resource_detail' res.pk %}" class="text-sm text-blue-600 hover:underline">نمایش</a>
+              <a href="{% url 'resource_edit' res.pk %}" class="text-sm text-yellow-600 hover:underline">ویرایش</a>
+              <form action="{% url 'resource_delete' res.pk %}" method="post" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="text-sm text-red-600 hover:underline">حذف</button>
+              </form>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-500">شما هنوز منبعی آپلود نکرده‌اید.</p>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}

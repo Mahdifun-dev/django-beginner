@@ -1,7 +1,279 @@
 {% extends 'base.html' %}
-{% block title %}Home{% endblock %}
+{% block title %}EduShare – Home{% endblock %}
 
 {% block content %}
-<h2 class="text-3xl font-bold text-center mb-6">Welcome to EduShare</h2>
-<p class="text-center text-gray-600">Share and explore educational resources.</p>
+  <!-- Hero Section -->
+  <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-12 p-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">EduShare – پلتفرم اشتراک منابع دانشجویی</h1>
+      <p class="text-gray-600 dark:text-gray-300 mb-6">
+        با EduShare، منابع آموزشی خود را آپلود کنید، از منابع دیگران استفاده کنید و با دانشجویان دیگر به اشتراک بگذارید.
+      </p>
+      {% if user.is_authenticated %}
+        <a href="{% url 'upload_resource' %}"
+           class="inline-block bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+          آپلود منبع جدید
+        </a>
+        <a href="{% url 'resource_list' %}"
+           class="inline-block ml-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-3 px-6 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
+          ببین آخرین منابع
+        </a>
+      {% else %}
+        <a href="{% url 'signup' %}"
+           class="inline-block bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+          ثبت‌نام و شروع کن
+        </a>
+        <a href="{% url 'resource_list' %}"
+           class="inline-block ml-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-3 px-6 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
+          مشاهده منابع
+        </a>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Search / Filter Bar -->
+  <section class="sticky top-24 bg-white dark:bg-gray-800 py-4 mb-8 shadow-sm z-10">
+    <form method="get" action="{% url 'resource_list' %}" class="max-w-3xl mx-auto flex items-center space-x-2">
+      <input type="text" name="q"
+             value="{{ request.GET.q|default:'' }}"
+             placeholder="جستجو بر اساس عنوان یا تگ..."
+             class="flex-grow border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-100"
+      />
+      <select name="category"
+              class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-100">
+        <option value="">همهٔ دسته‌ها</option>
+        {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+            {{ cat.name }} ({{ cat.resource_set.count }})
+          </option>
+        {% endfor %}
+      </select>
+      <button type="submit"
+              class="bg-primary hover:bg-primary-dark text-white font-semibold px-4 py-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+        جستجو
+      </button>
+    </form>
+  </section>
+
+  <!-- Featured Tabs: Latest / Popular -->
+  <section class="max-w-7xl mx-auto mb-12">
+    <div class="flex justify-center mb-6">
+      <button id="tab-latest" class="px-4 py-2 font-medium text-gray-800 dark:text-gray-100 bg-primary text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+        جدیدترین‌ها
+      </button>
+      <button id="tab-popular" class="px-4 py-2 font-medium text-gray-800 dark:text-gray-100 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition rounded-r-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+        پربازدیدترین‌ها
+      </button>
+    </div>
+    <div id="panel-latest" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      {% for res in latest_resources %}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col">
+          <div class="p-4 flex-1 flex flex-col">
+            <!-- (اختیاری) اگر thumbnail دارید -->
+            <!-- <img src="{{ res.thumbnail_url }}" alt="{{ res.title }}" class="w-full h-32 object-cover rounded-md mb-3"> -->
+            <span class="bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-xs font-medium uppercase px-2 py-1 rounded-full mb-2">
+              {{ res.category.name }}
+            </span>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2 line-clamp-2">
+              {{ res.title }}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
+              {{ res.description }}
+            </p>
+            <div class="mt-auto text-gray-500 dark:text-gray-400 text-xs flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5.121 17.804A9.002 9.002 0 015.7 12M4 12a8 8 0 1113.673 5.306M12 4v4m0 0l-1-1m1 1l1-1" />
+                </svg>
+                <span>{{ res.uploaded_at|date:"Y/m/d" }}</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 5a2 2 0 012-2h4a2 2 0 012 2v3H4a2 2 0 00-2 2v4h3V8h3V5H4a2 2 0 00-2-2z" />
+                  <path d="M13 7l-1.293-1.293a1 1 0 011.414-1.414L16 6.586V4a2 2 0 10-4 0v3z" />
+                  <path d="M16 15v-3h-3v3H8a2 2 0 100 4h8a2 2 0 000-4h-1z" />
+                </svg>
+                <span>{{ res.uploader.username }}</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 15l7-7 7 7"></path>
+                </svg>
+                <span>{{ res.likes.count }}</span>
+              </div>
+              <a href="{% url 'resource_detail' res.pk %}"
+                 class="bg-primary hover:bg-primary-dark text-white text-sm font-medium py-1 px-3 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                مشاهده
+              </a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center text-gray-500 dark:text-gray-400 col-span-full">منبعی برای نمایش وجود ندارد.</p>
+      {% endfor %}
+    </div>
+
+    <div id="panel-popular" class="hidden grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      {% for res in popular_resources %}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col">
+          <div class="p-4 flex-1 flex flex-col">
+            <span class="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 text-xs font-medium uppercase px-2 py-1 rounded-full mb-2">
+              {{ res.category.name }}
+            </span>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2 line-clamp-2">
+              {{ res.title }}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
+              {{ res.description }}
+            </p>
+            <div class="mt-auto text-gray-500 dark:text-gray-400 text-xs flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5.121 17.804A9.002 9.002 0 015.7 12M4 12a8 8 0 1113.673 5.306M12 4v4m0 0l-1-1m1 1l1-1" />
+                </svg>
+                <span>{{ res.uploaded_at|date:"Y/m/d" }}</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 5a2 2 0 012-2h4a2 2 0 012 2v3H4a2 2 0 00-2 2v4h3V8h3V5H4a2 2 0 00-2-2z" />
+                  <path d="M13 7l-1.293-1.293a1 1 0 011.414-1.414L16 6.586V4a2 2 0 10-4 0v3z" />
+                  <path d="M16 15v-3h-3v3H8a2 2 0 100 4h8a2 2 0 000-4h-1z" />
+                </svg>
+                <span>{{ res.uploader.username }}</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 15l7-7 7 7"></path>
+                </svg>
+                <span>{{ res.likes.count }}</span>
+              </div>
+              <a href="{% url 'resource_detail' res.pk %}"
+                 class="bg-primary hover:bg-primary-dark text-white text-sm font-medium py-1 px-3 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                مشاهده
+              </a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center text-gray-500 dark:text-gray-400 col-span-full">منبع پربازدیدی وجود ندارد.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- View All Resources Button -->
+  <div class="max-w-7xl mx-auto text-center mb-12">
+    <a href="{% url 'resource_list' %}"
+       class="inline-block bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-8 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+      مشاهدهٔ همه منابع
+    </a>
+  </div>
+
+  <!-- How It Works Section -->
+  <section class="bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg mb-12 p-8">
+    <div class="max-w-5xl mx-auto text-center">
+      <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">چگونه کار می‌کند</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="flex flex-col items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-primary mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M16 11V6a4 4 0 00-8 0v5m-4 4h16v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5z" />
+          </svg>
+          <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">۱. ثبت‌نام</h3>
+          <p class="text-gray-600 dark:text-gray-300 text-sm">یک حساب کاربری بسازید و وارد شوید.</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-primary mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 10-14 0 7 7 0 0014 0z" />
+          </svg>
+          <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">۲. جستجو و مرور</h3>
+          <p class="text-gray-600 dark:text-gray-300 text-sm">با جستجو یا مرور دسته‌بندی‌ها، منابع مورد نیازتان را پیدا کنید.</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-primary mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 7h16M4 11h16M4 15h16M4 19h16" />
+          </svg>
+          <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">۳. آپلود و اشتراک‌گذاری</h3>
+          <p class="text-gray-600 dark:text-gray-300 text-sm">منابع آموزشی خود را به راحتی آپلود کرده و به اشتراک بگذارید.</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-primary mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 7v13a3 3 0 003 3h12a3 3 0 003-3V7M16 3H8v4h8V3z" />
+          </svg>
+          <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">۴. دانلود و تعامل</h3>
+          <p class="text-gray-600 dark:text-gray-300 text-sm">منابع را دانلود کنید، لایک بزنید و نظر دهید.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="max-w-7xl mx-auto mb-12">
+    <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">دسته‌بندی‌ها</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% for cat in categories %}
+        <a href="{% url 'resource_list' %}?category={{ cat.id }}"
+           class="flex flex-col items-center bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition p-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-primary mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 11H5m14 0a2 2 0 00-2-2H7a2 2 0 00-2 2m14 0a2 2 0 01-2 2H7a2 2 0 01-2-2m14 0v8a2 2 0 01-2 2H7a2 2 0 01-2-2v-8" />
+          </svg>
+          <span class="text-lg font-medium text-gray-800 dark:text-gray-100 mb-1">{{ cat.name }}</span>
+          <span class="text-sm text-gray-500 dark:text-gray-400">({{ cat.resource_set.count }})</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- About Section (Optional) -->
+  <section class="bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg mb-12 p-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">دربارهٔ EduShare</h2>
+      <p class="text-gray-600 dark:text-gray-300 text-sm">
+        EduShare یک پلتفرم متن‌باز است که با هدف تسهیل دسترسی دانشجویان به منابع آموزشی، 
+        به شما اجازه می‌دهد تا محتوای آموزشی خود را با دیگران به اشتراک بگذارید و از منابع 
+        به‌روز استفاده کنید. ما معتقدیم با همکاری جمعی می‌توانیم یادگیری را آسان‌تر و فراگیرتر کنیم.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer is inherited from base.html -->
 {% endblock %}
+
+<!-- JavaScript for Tabs -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabLatest = document.getElementById('tab-latest');
+    const tabPopular = document.getElementById('tab-popular');
+    const panelLatest = document.getElementById('panel-latest');
+    const panelPopular = document.getElementById('panel-popular');
+
+    tabLatest.addEventListener('click', () => {
+      tabLatest.classList.replace('bg-gray-200', 'bg-primary');
+      tabLatest.classList.replace('text-gray-800', 'text-white');
+      tabPopular.classList.replace('bg-primary', 'bg-gray-200');
+      tabPopular.classList.replace('text-white', 'text-gray-800');
+      panelLatest.classList.remove('hidden');
+      panelPopular.classList.add('hidden');
+    });
+
+    tabPopular.addEventListener('click', () => {
+      tabPopular.classList.replace('bg-gray-200', 'bg-primary');
+      tabPopular.classList.replace('text-gray-800', 'text-white');
+      tabLatest.classList.replace('bg-primary', 'bg-gray-200');
+      tabLatest.classList.replace('text-white', 'text-gray-800');
+      panelPopular.classList.remove('hidden');
+      panelLatest.classList.add('hidden');
+    });
+  });
+</script>
