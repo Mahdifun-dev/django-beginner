@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>پروفایل کاربری</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#2563eb", secondary: "#60a5fa" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-4px)' },
+              }
+            },
+            animation: {
+              float: 'float 2s ease-in-out infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @font-face {
+      font-family: 'Vazir';
+      src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+      }
+      body {
+      font-family: 'Vazir', sans-serif;
+          background-color: #f8f9fa;
+      color: #1f2937;
+      }
+      :where([class^="ri-"])::before {
+      content: "\f3c2";
+      }
+      .video-thumbnail:hover .video-duration {
+      background-color: #FF0000;
+      }
+      .video-thumbnail:hover .play-icon {
+      opacity: 1;
+      }
+      input[type="search"]::-webkit-search-decoration,
+      input[type="search"]::-webkit-search-cancel-button,
+      input[type="search"]::-webkit-search-results-button,
+      input[type="search"]::-webkit-search-results-decoration {
+      display: none;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #a1a1a1;
+      }
+      .switch-input {
+      height: 0;
+      width: 0;
+      visibility: hidden;
+      position: absolute;
+      }
+      .switch-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      width: 44px;
+      height: 22px;
+      background: #3F3F3F;
+      border-radius: 100px;
+      position: relative;
+      transition: background-color 0.2s;
+      }
+      .switch-label .switch-button {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 45px;
+      transition: 0.2s;
+      background: #fff;
+      box-shadow: 0 0 2px 0 rgba(10, 10, 10, 0.29);
+      }
+      .switch-input:checked + .switch-label {
+      background: #FF0000;
+      }
+      .switch-input:checked + .switch-label .switch-button {
+      right: calc(100% - 2px);
+      transform: translateX(100%);
+      }
+      
+      .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: white;
+          min-width: 160px;
+          box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+          z-index: 1;
+          border-radius: 8px;
+      }
+      .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+      }
+      .dropdown-content a:hover {
+          background-color: #f1f5f9;
+          border-radius: 8px;
+      }
+      .dropdown-content form {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+      }
+      .dropdown-content form:hover {
+          background-color: #f1f5f9;
+          border-radius: 8px;
+      }
+      .show {
+          display: block;
+      }
+      .sidebar-item.active {
+          background-color: rgba(66, 133, 244, 0.1);
+          color: #4285F4;
+          border-right: 3px solid #4285F4;
+      }
+      .avatar-upload:hover .avatar-overlay {
+          opacity: 1;
+      }
+      .sidebar-item.active {
+          background-color: rgba(66, 133, 244, 0.1);
+          color: #4285F4;
+          border-right: 3px solid #4285F4;
+      }
+      .card {
+          transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      input:focus, textarea:focus {
+          border-color: #4285F4;
+          box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+      }
+      .skill-tag {
+          transition: all 0.2s;
+      }
+      .skill-tag:hover {
+          background-color: #4285F4;
+          color: white;
+      }
+    </style>
+    {% block head %}{% endblock %}
+  </head>
+  <body class="min-h-screen">
+    <!-- Header -->
+    <header
+      class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm"
+    >
+      <div class="flex items-center justify-between px-4 py-2">
+        <!-- Menu and Logo -->
+        <div class="flex items-center gap-4">
+          <button
+            onclick="toggleSidebar()"
+            class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="ri-menu-line ri-lg"></i>
+          </button>
+          <a href="{% url 'resources_list' %}" class="flex items-center">
+            <span class="text-2xl font-['Pacifico'] text-[#1e88e5]">logo</span>
+          </a>
+        </div>
+        <!-- Search Bar -->
+
+
+
+          <form method="get" action="{% url 'resources_list' %}" class="flex-grow max-w-2xl mx-4">
+            <div class="relative">
+              <input
+                type="search"
+                name="q"  
+                placeholder="جستجو..."
+                class="w-full bg-gray-50 border border-gray-200 text-gray-900 py-2 px-4 pr-10 rounded-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                value="{{ request.GET.q }}"
+              />
+              <div class="absolute left-3 top-1/2 transform -translate-y-1/2 flex gap-2">
+                <button type="submit"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary"
+                >
+                  <i class="ri-search-line ri-lg"></i>
+                </button>
+                <button type="button"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary"
+                >
+                  <i class="ri-mic-line ri-lg"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+        <!-- User Actions -->
+        <div class="flex items-center gap-2">
+          <a
+            class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            href="{% url 'upload_resource' %}"
+          >
+            <i class="ri-upload-line ri-lg"></i>
+          </a>
+            <button
+              class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            >
+              <i class="ri-notification-line ri-lg"></i>
+            </button>
+            <button
+              class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            >
+              <i class="ri-global-line ri-lg"></i>
+            </button>
+
+
+            {% if user.is_authenticated %}
+
+            <div class="mr-3 relative">
+                <div>
+                    <button type="button" id="user-menu-button" class="flex items-center max-w-xs rounded-full focus:outline-none" aria-expanded="false" aria-haspopup="true">
+                        {% if user.profile.image %}
+                          <img class="h-8 w-8 rounded-full" src="{{ user.profile.image.url }}" alt="Profile Image">
+                        {% else %}
+                          <i class="ri-user-line" style="font-size: 24px;"></i>
+                        {% endif %}
+                        <span class="mr-2 text-sm font-medium text-gray-700">{{ user.username }}</span>
+                        <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                    </button>
+                </div>
+                <div id="user-dropdown" class="dropdown-content left-0 mt-2">
+                    <a href="{% url 'profile_view' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">پروفایل</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">تنظیمات</a>
+                    <form action="{% url 'logout' %}" method="post" class="inline ">
+                      {% csrf_token %}
+                      <button type="submit"
+                              class="block w-full h-full text-sm text-gray-700 text-right ">
+                        خروج
+                      </button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+              <!-- اگر لاگین نکرده بود، آیکون لاگین -->
+              <a href="{% url 'login' %}">
+                <i class="ri-login-box-line" style="font-size: 24px;"></i> ورود
+              </a>
+            {% endif %}
+
+        </div>
+      </div>
+    </header>
+    <div class="container mx-auto px-4 py-6 flex flex-wrap">
+      <!-- Sidebar -->
+      <div class="w-full md:w-1/4 lg:w-1/5 mb-6 md:mb-0">
+        <div class="bg-white rounded shadow-sm p-4">
+          <div class="flex flex-col items-center mb-6">
+            <div class="relative w-24 h-24 mb-3 avatar-upload">
+              <div
+                class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow"
+              >
+                <img
+                  src="https://readdy.ai/api/search-image?query=professional%2520headshot%2520of%2520a%2520middle%2520eastern%2520man%2520with%2520a%2520friendly%2520smile%2C%2520neutral%2520background%2C%2520high%2520quality%2C%2520professional%2520looking&width=200&height=200&seq=avatar2&orientation=squarish"
+                  alt="تصویر پروفایل"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div
+                class="avatar-overlay absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 transition-opacity cursor-pointer"
+              >
+                <span
+                  class="w-10 h-10 flex items-center justify-center text-white"
+                >
+                  <i class="ri-camera-line text-xl"></i>
+                </span>
+              </div>
+            </div>
+            <h2 class="text-lg font-bold">{{ profile.user.first_name }} {{ profile.user.last_name }}</h2>
+            <p class="text-sm text-gray-600">استاد دانشگاه</p>
+            <div class="mt-3 flex space-x-reverse space-x-2">
+              <button
+                class="bg-primary text-white px-3 py-1 rounded-button text-sm whitespace-nowrap hover:bg-opacity-90 transition-colors"
+              >
+                ویرایش پروفایل
+              </button>
+            </div>
+          </div>
+          <nav>
+            <ul class="space-y-1">
+              <li>
+                <a
+                  href="#"
+                  class="sidebar-item active flex items-center py-2 px-3 rounded text-sm font-medium"
+                >
+                  <span class="w-5 h-5 flex items-center justify-center ml-2">
+                    <i class="ri-user-line"></i>
+                  </span>
+                  <span>مشخصات شخصی</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <span class="w-5 h-5 flex items-center justify-center ml-2">
+                    <i class="ri-book-open-line"></i>
+                  </span>
+                  <span>دوره‌های من</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <span class="w-5 h-5 flex items-center justify-center ml-2">
+                    <i class="ri-calendar-line"></i>
+                  </span>
+                  <span>زمان‌بندی کلاس‌ها</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <span class="w-5 h-5 flex items-center justify-center ml-2">
+                    <i class="ri-message-2-line"></i>
+                  </span>
+                  <span>پیام‌ها</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <span class="w-5 h-5 flex items-center justify-center ml-2">
+                    <i class="ri-medal-line"></i>
+                  </span>
+                  <span>دستاوردها</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <span class="w-5 h-5 flex items-center justify-center ml-2">
+                    <i class="ri-settings-3-line"></i>
+                  </span>
+                  <span>تنظیمات</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="w-full md:w-3/4 lg:w-4/5 md:pr-6">
+        <div class="bg-white rounded shadow-sm p-6 mb-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">مشخصات شخصی</h2>
+            <button
+              class="bg-primary text-white px-4 py-2 rounded-button text-sm whitespace-nowrap hover:bg-opacity-90 transition-colors"
+            >
+              ذخیره تغییرات
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >نام</label
+              >
+              <input
+                type="text"
+                value="علی"
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >نام خانوادگی</label
+              >
+              <input
+                type="text"
+                value="محمدی"
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >ایمیل</label
+              >
+              <input
+                type="email"
+                value="ali.mohammadi@example.com"
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >شماره موبایل</label
+              >
+              <input
+                type="tel"
+                value="۰۹۱۲۳۴۵۶۷۸۹"
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >تاریخ تولد</label
+              >
+              <input
+                type="text"
+                value="۱۳۶۵/۰۴/۱۲"
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >جنسیت</label
+              >
+              <div class="relative">
+                <select
+                  class="w-full px-4 py-2 border border-gray-300 rounded appearance-none focus:outline-none pr-8"
+                >
+                  <option>مرد</option>
+                  <option>زن</option>
+                  <option>ترجیح می‌دهم نگویم</option>
+                </select>
+                <div
+                  class="absolute inset-y-0 left-0 flex items-center px-2 pointer-events-none"
+                >
+                  <span
+                    class="w-4 h-4 flex items-center justify-center text-gray-500"
+                  >
+                    <i class="ri-arrow-down-s-line"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded shadow-sm p-6 mb-6">
+          <h2 class="text-xl font-bold mb-4">درباره من</h2>
+          <textarea
+            rows="4"
+            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
+          >
+استاد دانشگاه تهران با بیش از ۱۰ سال سابقه تدریس در زمینه مهندسی کامپیوتر. متخصص در برنامه‌نویسی پیشرفته و هوش مصنوعی. دارای مدرک دکترا از دانشگاه صنعتی شریف و مقالات متعدد در ژورنال‌های معتبر بین‌المللی.</textarea
+          >
+          <div class="text-left text-xs text-gray-500 mt-1">
+            ۰ / ۵۰۰ کاراکتر
+          </div>
+        </div>
+
+        <div class="bg-white rounded shadow-sm p-6 mb-6">
+          <h2 class="text-xl font-bold mb-4">مهارت‌های تخصصی</h2>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-medium mb-3">مهارت‌های تدریس</h3>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span
+                class="skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center"
+              >
+                برنامه‌نویسی پایتون
+                <button class="ml-1 text-gray-500 hover:text-red-500">
+                  <span class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-close-line"></i>
+                  </span>
+                </button>
+              </span>
+              <span
+                class="skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center"
+              >
+                هوش مصنوعی
+                <button class="ml-1 text-gray-500 hover:text-red-500">
+                  <span class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-close-line"></i>
+                  </span>
+                </button>
+              </span>
+              <span
+                class="skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center"
+              >
+                یادگیری ماشین
+                <button class="ml-1 text-gray-500 hover:text-red-500">
+                  <span class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-close-line"></i>
+                  </span>
+                </button>
+              </span>
+              <span
+                class="skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center"
+              >
+                شبکه‌های عصبی
+                <button class="ml-1 text-gray-500 hover:text-red-500">
+                  <span class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-close-line"></i>
+                  </span>
+                </button>
+              </span>
+            </div>
+            <div class="flex">
+          <a href="{% url 'add_skill' %}"
+            id="upload-button"
+            class="px-6 py-2 bg-[#2563eb] text-white rounded-button hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 whitespace-nowrap"
+          >
+            افزودن مهارت
+          </a>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-medium mb-3">سطح دانش</h3>
+            <div class="space-y-4">
+              
+              {% for skill in profile.skills.all %}
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium">{{ skill.name }}</span>
+                  <span class="text-sm text-gray-600">{{ skill.level }}٪</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    class="bg-primary h-2 rounded-full"
+                    style="width: {{ skill.level }}%"
+                  ></div>
+                </div>
+              </div>
+              {% endfor %}
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium">هوش مصنوعی</span>
+                  <span class="text-sm text-gray-600">۸۵٪</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    class="bg-[#4285F4] h-2 rounded-full"
+                    style="width: 85%"
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium">یادگیری ماشین</span>
+                  <span class="text-sm text-gray-600">۸۰٪</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    class="bg-[#4285F4] h-2 rounded-full"
+                    style="width: 80%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded shadow-sm p-6 mb-6">
+          <h2 class="text-xl font-bold mb-4">دستاوردهای حرفه‌ای</h2>
+
+          <div class="space-y-6">
+            <div class="border-r-2 border-primary pr-4 relative">
+              <div
+                class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-primary"
+              ></div>
+              <div class="mb-1">
+                <span class="text-sm text-gray-500">۱۳۹۹ - اکنون</span>
+              </div>
+              <h3 class="text-lg font-medium">استاد دانشگاه تهران</h3>
+              <p class="text-gray-700 mt-1">
+                تدریس دروس پیشرفته هوش مصنوعی و یادگیری ماشین در دانشکده مهندسی
+                کامپیوتر
+              </p>
+            </div>
+
+            <div class="border-r-2 border-gray-200 pr-4 relative">
+              <div
+                class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-gray-300"
+              ></div>
+              <div class="mb-1">
+                <span class="text-sm text-gray-500">۱۳۹۵ - ۱۳۹۹</span>
+              </div>
+              <h3 class="text-lg font-medium">
+                پژوهشگر ارشد - پژوهشگاه علوم و فناوری اطلاعات ایران
+              </h3>
+              <p class="text-gray-700 mt-1">
+                هدایت پروژه‌های تحقیقاتی در زمینه پردازش زبان طبیعی و یادگیری
+                عمیق
+              </p>
+            </div>
+
+            <div class="border-r-2 border-gray-200 pr-4 relative">
+              <div
+                class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-gray-300"
+              ></div>
+              <div class="mb-1">
+                <span class="text-sm text-gray-500">۱۳۹۲ - ۱۳۹۵</span>
+              </div>
+              <h3 class="text-lg font-medium">مدرس دانشگاه صنعتی شریف</h3>
+              <p class="text-gray-700 mt-1">
+                تدریس دروس الگوریتم‌های پیشرفته و ساختمان داده‌ها
+              </p>
+            </div>
+          </div>
+
+          <button
+            class="mt-4 text-primary flex items-center text-sm font-medium hover:underline"
+          >
+            <span class="w-5 h-5 flex items-center justify-center ml-1">
+              <i class="ri-add-line"></i>
+            </span>
+            افزودن دستاورد جدید
+          </button>
+        </div>
+        <div class="bg-white rounded shadow-sm p-6">
+          <h2 class="text-xl font-bold mb-4">مدارک و گواهی‌نامه‌ها</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="border rounded p-4 flex items-start">
+              <div
+                class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3"
+              >
+                <span
+                  class="w-6 h-6 flex items-center justify-center text-primary"
+                >
+                  <i class="ri-file-text-line"></i>
+                </span>
+              </div>
+              <div>
+                <h3 class="font-medium">دکترای مهندسی کامپیوتر</h3>
+                <p class="text-sm text-gray-600">دانشگاه صنعتی شریف - ۱۳۹۲</p>
+              </div>
+            </div>
+
+            <div class="border rounded p-4 flex items-start">
+              <div
+                class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3"
+              >
+                <span
+                  class="w-6 h-6 flex items-center justify-center text-primary"
+                >
+                  <i class="ri-file-text-line"></i>
+                </span>
+              </div>
+              <div>
+                <h3 class="font-medium">کارشناسی ارشد هوش مصنوعی</h3>
+                <p class="text-sm text-gray-600">دانشگاه تهران - ۱۳۸۸</p>
+              </div>
+            </div>
+
+            <div class="border rounded p-4 flex items-start">
+              <div
+                class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3"
+              >
+                <span
+                  class="w-6 h-6 flex items-center justify-center text-primary"
+                >
+                  <i class="ri-file-text-line"></i>
+                </span>
+              </div>
+              <div>
+                <h3 class="font-medium">گواهینامه حرفه‌ای هوش مصنوعی</h3>
+                <p class="text-sm text-gray-600">دیپ لرنینگ - ۱۳۹۷</p>
+              </div>
+            </div>
+
+            <div class="border rounded p-4 flex items-start">
+              <div
+                class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3"
+              >
+                <span
+                  class="w-6 h-6 flex items-center justify-center text-primary"
+                >
+                  <i class="ri-file-text-line"></i>
+                </span>
+              </div>
+              <div>
+                <h3 class="font-medium">دوره تخصصی پردازش زبان طبیعی</h3>
+                <p class="text-sm text-gray-600">استنفورد آنلاین - ۱۳۹۶</p>
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="mt-4 text-primary flex items-center text-sm font-medium hover:underline"
+          >
+            <span class="w-5 h-5 flex items-center justify-center ml-1">
+              <i class="ri-add-line"></i>
+            </span>
+            افزودن مدرک جدید
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script id="profileImageUpload">
+      document.addEventListener("DOMContentLoaded", function () {
+        const avatarUpload = document.querySelector(".avatar-upload");
+        if (avatarUpload) {
+          avatarUpload.addEventListener("click", function () {
+            // Simulate file upload dialog
+            alert("انتخاب تصویر پروفایل");
+          });
+        }
+      });
+    </script>
+    <script id="sidebarNavigation">
+      document.addEventListener("DOMContentLoaded", function () {
+        const sidebarItems = document.querySelectorAll(".sidebar-item");
+        sidebarItems.forEach((item) => {
+          item.addEventListener("click", function (e) {
+            e.preventDefault();
+            sidebarItems.forEach((i) => i.classList.remove("active"));
+            this.classList.add("active");
+          });
+        });
+      });
+    </script>
+
+    <script id="skillsManagement">
+      document.addEventListener("DOMContentLoaded", function () {
+        const skillTags = document.querySelectorAll(".skill-tag button");
+        skillTags.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            this.closest(".skill-tag").remove();
+          });
+        });
+
+        const addSkillForm =
+          document.querySelector(".skill-tag").parentNode.nextElementSibling;
+        const skillInput = addSkillForm.querySelector("input");
+        const addButton = addSkillForm.querySelector("button");
+        addButton.addEventListener("click", function () {
+          const skillValue = skillInput.value.trim();
+          if (skillValue) {
+            const skillsContainer = document.querySelector(".skill-tag").parentNode;
+            const newSkill = document.createElement("span");
+            newSkill.className =
+              "skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center";
+            newSkill.innerHTML = `
+                              ${skillValue}
+                              <button class="ml-1 text-gray-500 hover:text-red-500">
+                                  <span class="w-4 h-4 flex items-center justify-center">
+                                      <i class="ri-close-line"></i>
+                                  </span>
+                              </button>
+                          `;
+
+            newSkill.querySelector("button").addEventListener("click", function () {
+              newSkill.remove();
+            });
+
+            skillsContainer.appendChild(newSkill);
+            skillInput.value = "";
+          }
+        });
+
+        skillInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            addButton.click();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

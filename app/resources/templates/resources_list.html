@@ -1,0 +1,639 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+      
+
+          <section class="mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">ویدیوهای برگزیده</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {% for video in videos %}
+                <div class="video-thumbnail group">
+                  <div class="relative rounded-lg overflow-hidden">
+                    <img
+                      src="{{ resources.thumbnail }}"
+                      alt="{{ resources.title }}"
+                      class="w-full object-cover"
+                    />
+                    <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration">
+                      {{ resources.duration }}
+                    </div>
+                    <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon">
+                      <div class="w-12 h-12 flex items-center justify-center">
+                        <i class="ri-play-fill ri-2x"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <h3 class="font-medium text-gray-800">{{ resources.title }}</h3>
+                    <div class="flex items-center text-sm text-gray-500 mt-1">
+                      <span>{{ resources.instructor }}</span>
+                      <span class="mx-1">•</span>
+                      <span>{{ resources.views|intcomma }} بازدید</span>
+                      <span class="mx-1">•</span>
+                      <span>{{ resources.uploaded_at|timesince }} پیش</span>
+                    </div>
+                  </div>
+                </div>
+              {% empty %}
+                <p>ویدیویی برای نمایش وجود ندارد.</p>
+              {% endfor %}
+            </div>
+          </section>
+
+
+
+
+
+
+
+        <section class="mb-8">
+          <h2 class="text-xl font-bold mb-4 text-gray-800">ویدیوهای برگزیده</h2>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
+            <!-- Video 1 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20university%20student%20studying%20advanced%20mathematics%2C%20focused%20on%20equations%20and%20formulas%20in%20a%20modern%20library%20setting%20with%20soft%20lighting%2C%20books%20and%20digital%20resources%20visible&width=320&height=180&seq=1&orientation=landscape"
+                  alt="آموزش ریاضیات پیشرفته"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۴۵:۲۱
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  آموزش ریاضیات پیشرفته - مشتق و انتگرال
+                </h3>
+                <div class="flex items-center text-sm text-gray-500 mt-1">
+                  <span>دکتر محمدی</span>
+                  <span class="mx-1">•</span>
+                  <span>۱۲ هزار بازدید</span>
+                  <span class="mx-1">•</span>
+                  <span>۲ هفته پیش</span>
+                </div>
+              </div>
+            </div>
+            <!-- Video 2 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20detailed%20view%20of%20chemistry%20laboratory%20equipment%20with%20colorful%20chemical%20reactions%2C%20beakers%2C%20test%20tubes%2C%20and%20molecular%20models%20in%20a%20modern%20university%20lab%20setting&width=320&height=180&seq=2&orientation=landscape"
+                  alt="آزمایشگاه شیمی"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۳۲:۱۵
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  آزمایشگاه شیمی آلی - واکنش‌های استری شدن
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر رضایی</span>
+                  <span class="mx-1">•</span>
+                  <span>۸ هزار بازدید</span>
+                  <span class="mx-1">•</span>
+                  <span>۱ ماه پیش</span>
+                </div>
+              </div>
+            </div>
+            <!-- Video 3 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20student%20coding%20on%20a%20laptop%20with%20multiple%20screens%20showing%20programming%20code%2C%20software%20development%20environment%2C%20in%20a%20modern%20tech%20workspace%20with%20soft%20lighting&width=320&height=180&seq=3&orientation=landscape"
+                  alt="برنامه‌نویسی پایتون"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۵۸:۴۲
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  آموزش برنامه‌نویسی پایتون - ساختارهای داده پیشرفته
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>مهندس احمدی</span>
+                  <span class="mx-1">•</span>
+                  <span>۱۵ هزار بازدید</span>
+                  <span class="mx-1">•</span>
+                  <span>۳ روز پیش</span>
+                </div>
+              </div>
+            </div>
+            <!-- Video 4 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20detailed%20view%20of%20electrical%20engineering%20components%2C%20circuit%20boards%2C%20microcontrollers%2C%20and%20testing%20equipment%20in%20a%20modern%20engineering%20laboratory%20with%20technical%20diagrams%20visible&width=320&height=180&seq=4&orientation=landscape"
+                  alt="مهندسی برق"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۴۱:۳۷
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  مبانی الکترونیک قدرت - مدارهای اینورتر
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر حسینی</span>
+                  <span class="mx-1">•</span>
+                  <span>۷ هزار بازدید</span>
+                  <span class="mx-1">•</span>
+                  <span>۱ هفته پیش</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Popular Courses -->
+        <section class="mb-8">
+          <h2 class="text-xl font-bold mb-4">دوره‌های پرطرفدار</h2>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
+            <!-- Course 1 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20physics%20classroom%20with%20experimental%20setup%20for%20mechanics%2C%20showing%20pendulums%2C%20force%20diagrams%2C%20and%20measuring%20equipment%20in%20a%20university%20laboratory&width=320&height=180&seq=5&orientation=landscape"
+                  alt="فیزیک مکانیک"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۱۲ ویدیو
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  دوره جامع فیزیک مکانیک
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر کریمی</span>
+                  <span class="mx-1">•</span>
+                  <span>۲۰ هزار دانشجو</span>
+                </div>
+              </div>
+            </div>
+            <!-- Course 2 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20student%20working%20on%20a%20civil%20engineering%20project%20with%20structural%20models%2C%20blueprints%2C%20and%20CAD%20software%20in%20a%20modern%20engineering%20design%20studio&width=320&height=180&seq=6&orientation=landscape"
+                  alt="مهندسی عمران"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۱۸ ویدیو
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  اصول طراحی سازه‌های بتنی
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر صادقی</span>
+                  <span class="mx-1">•</span>
+                  <span>۱۵ هزار دانشجو</span>
+                </div>
+              </div>
+            </div>
+            <!-- Course 3 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20biology%20laboratory%20with%20microscopes%2C%20cell%20cultures%2C%20and%20DNA%20models%2C%20showing%20detailed%20cellular%20structures%20and%20experimental%20equipment%20in%20a%20university%20research%20setting&width=320&height=180&seq=7&orientation=landscape"
+                  alt="زیست‌شناسی سلولی"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۱۵ ویدیو
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  زیست‌شناسی سلولی و مولکولی
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر نجفی</span>
+                  <span class="mx-1">•</span>
+                  <span>۱۲ هزار دانشجو</span>
+                </div>
+              </div>
+            </div>
+            <!-- Course 4 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20student%20practicing%20English%20language%20with%20conversation%20partners%2C%20language%20learning%20materials%2C%20and%20digital%20resources%20in%20a%20modern%20language%20laboratory&width=320&height=180&seq=8&orientation=landscape"
+                  alt="زبان انگلیسی"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۲۴ ویدیو
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  زبان انگلیسی تخصصی برای دانشجویان
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>استاد رحیمی</span>
+                  <span class="mx-1">•</span>
+                  <span>۲۵ هزار دانشجو</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Recently Uploaded -->
+        <section class="mb-8">
+          <h2 class="text-xl font-bold mb-4">آپلودهای اخیر</h2>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
+            <!-- Video 1 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20mechanical%20engineering%20workshop%20with%20robotic%20components%2C%203D%20printers%2C%20and%20prototyping%20equipment%20in%20a%20modern%20university%20engineering%20facility&width=320&height=180&seq=9&orientation=landscape"
+                  alt="مهندسی مکانیک"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۳۸:۲۲
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  طراحی و ساخت رباتیک - بخش اول
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر موسوی</span>
+                  <span class="mx-1">•</span>
+                  <span>۲ هزار بازدید</span>
+                  <span class="mx-1">•</span>
+                  <span>۱ روز پیش</span>
+                </div>
+              </div>
+            </div>
+            <!-- Video 2 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20data%20science%20visualization%20with%20charts%2C%20graphs%2C%20and%20statistical%20analysis%20on%20multiple%20screens%20in%20a%20modern%20computer%20lab%20environment&width=320&height=180&seq=10&orientation=landscape"
+                  alt="علم داده"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۴۷:۱۵
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  تحلیل داده‌های بزرگ با پایتون
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>مهندس حیدری</span>
+                  <span class="mx-1">•</span>
+                  <span>۱.۵ هزار بازدید</span>
+                  <span class="mx-1">•</span>
+                  <span>۲ روز پیش</span>
+                </div>
+              </div>
+            </div>
+            <!-- Video 3 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20detailed%20view%20of%20architectural%20design%20process%20with%20models%2C%20blueprints%2C%20and%203D%20renderings%20in%20a%20modern%20architectural%20studio%20with%20design%20tools%20visible&width=320&height=180&seq=11&orientation=landscape"
+                  alt="معماری"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۵۲:۰۸
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  اصول طراحی معماری پایدار
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر عباسی</span>
+                  <span class="mx-1">•</span>
+                  <span>۹۸۰ بازدید</span>
+                  <span class="mx-1">•</span>
+                  <span>۳ روز پیش</span>
+                </div>
+              </div>
+            </div>
+            <!-- Video 4 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20business%20management%20lecture%20with%20presentation%20slides%2C%20case%20studies%2C%20and%20students%20taking%20notes%20in%20a%20modern%20business%20school%20classroom&width=320&height=180&seq=12&orientation=landscape"
+                  alt="مدیریت"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۴۳:۵۱
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  مدیریت استراتژیک کسب و کار
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر محسنی</span>
+                  <span class="mx-1">•</span>
+                  <span>۱.۲ هزار بازدید</span>
+                  <span class="mx-1">•</span>
+                  <span>۴ روز پیش</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Top Rated -->
+        <section class="mb-8">
+          <h2 class="text-xl font-bold mb-4">بالاترین امتیازها</h2>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
+            <!-- Video 1 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20detailed%20view%20of%20artificial%20intelligence%20and%20machine%20learning%20concepts%20with%20neural%20network%20visualizations%20and%20algorithm%20diagrams%20in%20a%20high-tech%20research%20environment&width=320&height=180&seq=13&orientation=landscape"
+                  alt="هوش مصنوعی"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۱:۱۲:۴۵
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+                <div class="absolute top-2 left-2 flex">
+                  <div
+                    class="bg-primary text-white text-xs px-1 py-0.5 rounded flex items-center"
+                  >
+                    <i class="ri-star-fill ri-sm mr-1"></i>
+                    <span>۴.۹</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  یادگیری عمیق و شبکه‌های عصبی
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر جعفری</span>
+                  <span class="mx-1">•</span>
+                  <span>۳۵ هزار بازدید</span>
+                </div>
+              </div>
+            </div>
+            <!-- Video 2 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20medical%20education%20session%20with%20anatomical%20models%2C%20medical%20imaging%20displays%2C%20and%20clinical%20demonstration%20in%20a%20modern%20medical%20school%20laboratory&width=320&height=180&seq=14&orientation=landscape"
+                  alt="پزشکی"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۵۵:۱۸
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+                <div class="absolute top-2 left-2 flex">
+                  <div
+                    class="bg-primary text-white text-xs px-1 py-0.5 rounded flex items-center"
+                  >
+                    <i class="ri-star-fill ri-sm mr-1"></i>
+                    <span>۴.۸</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  آناتومی و فیزیولوژی انسان
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر رضوی</span>
+                  <span class="mx-1">•</span>
+                  <span>۲۸ هزار بازدید</span>
+                </div>
+              </div>
+            </div>
+            <!-- Video 3 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20quantum%20physics%20lecture%20with%20complex%20equations%2C%20quantum%20models%2C%20and%20experimental%20results%20displayed%20on%20screens%20in%20an%20advanced%20physics%20laboratory&width=320&height=180&seq=15&orientation=landscape"
+                  alt="فیزیک کوانتوم"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۴۸:۳۳
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+                <div class="absolute top-2 left-2 flex">
+                  <div
+                    class="bg-primary text-white text-xs px-1 py-0.5 rounded flex items-center"
+                  >
+                    <i class="ri-star-fill ri-sm mr-1"></i>
+                    <span>۴.۷</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">مبانی فیزیک کوانتوم</h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>دکتر امینی</span>
+                  <span class="mx-1">•</span>
+                  <span>۲۲ هزار بازدید</span>
+                </div>
+              </div>
+            </div>
+            <!-- Video 4 -->
+            <div class="video-thumbnail group">
+              <div class="relative rounded-lg overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=A%20cybersecurity%20demonstration%20with%20network%20security%20tools%2C%20code%20analysis%2C%20and%20threat%20detection%20systems%20in%20a%20modern%20IT%20security%20operations%20center&width=320&height=180&seq=16&orientation=landscape"
+                  alt="امنیت سایبری"
+                  class="w-full object-cover"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration"
+                >
+                  ۱:۰۵:۲۷
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon"
+                >
+                  <div class="w-12 h-12 flex items-center justify-center">
+                    <i class="ri-play-fill ri-2x"></i>
+                  </div>
+                </div>
+                <div class="absolute top-2 left-2 flex">
+                  <div
+                    class="bg-primary text-white text-xs px-1 py-0.5 rounded flex items-center"
+                  >
+                    <i class="ri-star-fill ri-sm mr-1"></i>
+                    <span>۴.۷</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <h3 class="font-medium text-gray-800">
+                  امنیت سایبری و تست نفوذ
+                </h3>
+                <div class="flex items-center text-sm text-gray-400 mt-1">
+                  <span>مهندس سلیمانی</span>
+                  <span class="mx-1">•</span>
+                  <span>۱۸ هزار بازدید</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+{% endblock content %}

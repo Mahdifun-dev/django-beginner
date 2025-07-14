@@ -1,179 +1,667 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <!-- Accessibility: Skip Link -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-white px-2 py-1 rounded">Skip to content</a>
-  <title>{% block title %}EduShare{% endblock %}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Fonts: Using Google Fonts for better readability -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Tailwind via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: { primary: '#2563eb', 'primary-dark': '#1f40b0' },
-          fontFamily: { sans: ['Inter', 'sans-serif'] }
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>{% block title %}پلتفرم آموزشی دانشجویان{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#2563eb", secondary: "#60a5fa" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-4px)' },
+              }
+            },
+            animation: {
+              float: 'float 2s ease-in-out infinite',
+            }
+          }
         }
       }
-    }
-  </script>
-</head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex flex-col font-sans">
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @font-face {
+      font-family: 'Vazir';
+      src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+      }
+      body {
+      font-family: 'Vazir', sans-serif;
+      background-color: #ffffff;
+      color: #1f2937;
+      }
+      :where([class^="ri-"])::before {
+      content: "\f3c2";
+      }
+      .video-thumbnail:hover .video-duration {
+      background-color: #FF0000;
+      }
+      .video-thumbnail:hover .play-icon {
+      opacity: 1;
+      }
+      input[type="search"]::-webkit-search-decoration,
+      input[type="search"]::-webkit-search-cancel-button,
+      input[type="search"]::-webkit-search-results-button,
+      input[type="search"]::-webkit-search-results-decoration {
+      display: none;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #a1a1a1;
+      }
+      .switch-input {
+      height: 0;
+      width: 0;
+      visibility: hidden;
+      position: absolute;
+      }
+      .switch-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      width: 44px;
+      height: 22px;
+      background: #3F3F3F;
+      border-radius: 100px;
+      position: relative;
+      transition: background-color 0.2s;
+      }
+      .switch-label .switch-button {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 45px;
+      transition: 0.2s;
+      background: #fff;
+      box-shadow: 0 0 2px 0 rgba(10, 10, 10, 0.29);
+      }
+      .switch-input:checked + .switch-label {
+      background: #FF0000;
+      }
+      .switch-input:checked + .switch-label .switch-button {
+      right: calc(100% - 2px);
+      transform: translateX(100%);
+      }
+      
+      .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: white;
+          min-width: 160px;
+          box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+          z-index: 1;
+          border-radius: 8px;
+      }
+      .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+      }
+      .dropdown-content a:hover {
+          background-color: #f1f5f9;
+          border-radius: 8px;
+      }
+      .dropdown-content form {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+      }
+      .dropdown-content form:hover {
+          background-color: #f1f5f9;
+          border-radius: 8px;
+      }
+      .show {
+          display: block;
+      }
+      .sidebar-item.active {
+          background-color: rgba(66, 133, 244, 0.1);
+          color: #4285F4;
+          border-right: 3px solid #4285F4;
+      }
+    </style>
+    {% block head %}{% endblock %}
+  </head>
+  <body class="min-h-screen">
+    <!-- Header -->
+    <header
+      class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm"
+    >
+      <div class="flex items-center justify-between px-4 py-2">
+        <!-- Menu and Logo -->
+        <div class="flex items-center gap-4">
+          <button
+            onclick="toggleSidebar()"
+            class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="ri-menu-line ri-lg"></i>
+          </button>
+          <a href="{% url 'resources_list' %}" class="flex items-center">
+            <span class="text-2xl font-['Pacifico'] text-[#1e88e5]">logo</span>
+          </a>
+        </div>
+        <!-- Search Bar -->
 
-  <!-- Header / Navbar -->
-  <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center py-4">
-        <!-- Logo -->
-        <a href="{% url 'home' %}" class="text-2xl font-bold text-primary dark:text-primary-dark tracking-wide">EduShare</a>
-        
-        <!-- Desktop Menu -->
-        <nav aria-label="Primary" class="hidden md:flex space-x-6 items-center">
-          <a href="{% url 'home' %}"
-             class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 {% if request.resolver_match.url_name == 'home' %}font-semibold{% endif %}">
-            Home
+
+
+          <form method="get" action="{% url 'resources_list' %}" class="flex-grow max-w-2xl mx-4">
+            <div class="relative">
+              <input
+                type="search"
+                name="q"  
+                placeholder="جستجو..."
+                class="w-full bg-gray-50 border border-gray-200 text-gray-900 py-2 px-4 pr-10 rounded-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                value="{{ request.GET.q }}"
+              />
+              <div class="absolute left-3 top-1/2 transform -translate-y-1/2 flex gap-2">
+                <button type="submit"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary"
+                >
+                  <i class="ri-search-line ri-lg"></i>
+                </button>
+                <button type="button"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary"
+                >
+                  <i class="ri-mic-line ri-lg"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+        <!-- User Actions -->
+        <div class="flex items-center gap-2">
+          <a
+            class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            href="{% url 'upload_resource' %}"
+          >
+            <i class="ri-upload-line ri-lg"></i>
           </a>
-          <a href="{% url 'resource_list' %}"
-             class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 {% if request.resolver_match.url_name == 'resource_list' %}font-semibold{% endif %}">
-            Resources
-          </a>
-          {% if user.is_authenticated %}
-            <a href="{% url 'upload_resource' %}"
-               class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
-              Upload
-            </a>
-            {% if user.is_staff %}
-              <a href="{% url 'pending_resources' %}"
-                 class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300 font-medium transition focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50">
-                🕒 Pending
+            <button
+              class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            >
+              <i class="ri-notification-line ri-lg"></i>
+            </button>
+            <button
+              class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            >
+              <i class="ri-global-line ri-lg"></i>
+            </button>
+
+
+            {% if user.is_authenticated %}
+
+            <div class="mr-3 relative">
+                <div>
+                    <button type="button" id="user-menu-button" class="flex items-center max-w-xs rounded-full focus:outline-none" aria-expanded="false" aria-haspopup="true">
+                        {% if user.profile.image %}
+                          <img class="h-8 w-8 rounded-full" src="{{ user.profile.image.url }}" alt="Profile Image">
+                        {% else %}
+                          <i class="ri-user-line" style="font-size: 24px;"></i>
+                        {% endif %}
+                        <span class="mr-2 text-sm font-medium text-gray-700">{{ user.username }}</span>
+                        <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                    </button>
+                </div>
+                <div id="user-dropdown" class="dropdown-content left-0 mt-2">
+                    <a href="{% url 'profile_view' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">پروفایل</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">تنظیمات</a>
+                    <form action="{% url 'logout' %}" method="post" class="inline ">
+                      {% csrf_token %}
+                      <button type="submit"
+                              class="block w-full h-full text-sm text-gray-700 text-right ">
+                        خروج
+                      </button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+              <!-- اگر لاگین نکرده بود، آیکون لاگین -->
+              <a href="{% url 'login' %}">
+                <i class="ri-login-box-line" style="font-size: 24px;"></i> ورود
               </a>
             {% endif %}
-            <form action="{% url 'logout' %}" method="post" class="inline">
-              {% csrf_token %}
-              <button type="submit"
-                      class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600 font-medium transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
-                Logout
-              </button>
-            </form>
-            <span class="ml-4 text-gray-500 dark:text-gray-400 text-sm">Hi, <span class="font-medium">{{ user.username }}</span></span>
-          {% else %}
-            <a href="{% url 'login' %}" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Login</a>
-            <a href="{% url 'signup' %}" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Sign up</a>
-          {% endif %}
-          <!-- Dark Mode Toggle -->
-          <button id="theme-toggle" aria-label="Toggle Dark Mode" class="ml-4 focus:outline-none">
-            <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 5a5 5 0 100 10A5 5 0 0010 5z"></path></svg>
-            <svg id="theme-toggle-dark-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293a8 8 0 11-10.586-10.586 8.001 8.001 0 0010.586 10.586z"></path></svg>
-          </button>
-        </nav>
 
-        <!-- Mobile Menu Button -->
-        <div class="md:hidden">
-          <button id="menu-toggle" class="focus:outline-none" aria-label="Toggle navigation menu">
-            <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path id="menu-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 6h16M4 12h16M4 18h16" />
-              <path id="menu-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
       </div>
-    </div>
+    </header>
+    <!-- Main Content -->
+    <div class="flex">
+      <!-- Sidebar -->
+       <div id="sidebar" class="transition-all duration-300 ease-in-out overflow-hidden bg-white rounded shadow-sm p-4">
 
-    <!-- Mobile Menu -->
-    <nav id="mobile-menu" class="hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-      <div class="px-4 py-3 space-y-2">
-        <a href="{% url 'home' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Home</a>
-        <a href="{% url 'resource_list' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Resources</a>
-        {% if user.is_authenticated %}
-          <a href="{% url 'upload_resource' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Upload</a>
-          {% if user.is_staff %}
-            <a href="{% url 'pending_resources' %}" class="block text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50">🕒 Pending</a>
-          {% endif %}
-          <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="w-full text-left text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">Logout</button>
-          </form>
-        {% else %}
-          <a href="{% url 'login' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Login</a>
-          <a href="{% url 'signup' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Sign up</a>
-        {% endif %}
-        <!-- Dark Mode Toggle Mobile -->
-        <button id="theme-toggle-mobile" aria-label="Toggle Dark Mode" class="block mt-2 focus:outline-none">
-          <svg id="theme-toggle-light-icon-mobile" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 5a5 5 0 100 10A5 5 0 0010 5z"></path></svg>
-          <svg id="theme-toggle-dark-icon-mobile" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293a8 8 0 11-10.586-10.586 8.001 8.001 0 0010.586 10.586z"></path></svg>
-        </button>
+        <div class="bg-white rounded shadow-sm p-4">
+          <nav>
+            <ul class="space-y-1">
+              <li>
+                <a
+                  href="#"
+                  class="sidebar-item active flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+                >
+                  <div class="w-5 h-6 flex items-center justify-center ml-2">
+                    <i class="ri-home-line"></i>
+                  </div>
+                  <span class="sidebar-label">صفحه اصلی</span>
+                </a>
+              </li>
+              <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-fire-line"></i>
+              </div>
+              <span class="sidebar-label">محبوب‌ترین‌ها</span>
+            </a>
+              </li>
+              <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-time-line"></i>
+              </div>
+              <span class="sidebar-label">جدیدترین‌ها</span>
+            </a>
+              </li>
+          <hr class="border-[#272727] my-4 sidebar-label" />
+          <h3 class="text-md font-bold mb-2 sidebar-label">موضوعات تحصیلی</h3>
+              <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-calculator-line"></i>
+              </div>
+              <span class="sidebar-label">ریاضیات</span>
+            </a>
+              </li>
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-atom-line"></i>
+              </div>
+              <span class="sidebar-label">فیزیک</span>
+            </a>
+                  </li>
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-flask-line"></i>
+              </div>
+              <span class="sidebar-label">شیمی</span>
+            </a>
+                  </li>
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-plant-line"></i>
+              </div>
+              <span class="sidebar-label">زیست‌شناسی</span>
+            </a>
+                  </li>
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-computer-line"></i>
+              </div>
+              <span class="sidebar-label">علوم کامپیوتر</span>
+            </a>
+                  </li>
+          <hr class="border-[#272727] my-4 sidebar-label" />
+          <h3 class="text-md font-bold mb-2 sidebar-label">مجموعه‌های من</h3>
+          <div class="space-y-1">
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-bookmark-line"></i>
+              </div>
+              <span class="sidebar-label">ذخیره شده‌ها</span>
+            </a>
+                  </li>
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-history-line"></i>
+              </div>
+              <span class="sidebar-label">تاریخچه</span>
+            </a>
+                  </li>
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-upload-line"></i>
+              </div>
+              <span class="sidebar-label">آپلودهای من</span>
+            </a>
+                  </li>
+                  
+          </div>
+          <hr class="border-[#272727] my-4 sidebar-label" />
+          <h3 class="text-md font-bold mb-2 sidebar-label">تنظیمات</h3>
+          <div class="space-y-1">
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-user-line"></i>
+              </div>
+              <span class="sidebar-label">پروفایل من</span>
+            </a>
+                  </li>
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-settings-line"></i>
+              </div>
+              <span class="sidebar-label">تنظیمات</span>
+            </a>
+                  </li>
+                  <li>
+            <a
+              href="#"
+              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+            >
+              <div class="w-5 h-6 flex items-center justify-center ml-2">
+                <i class="ri-question-line"></i>
+              </div>
+              <span class="sidebar-label">راهنما</span>
+            </a>
+              </li>
+            </ul>
+          
+        </div>
       </div>
-    </nav>
-  </header>
+      <!-- Video Grid -->
+      <main class="flex-1 p-4 bg-white">
 
-  <!-- Main Content -->
-  <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    {% block content %}{% endblock %}
-  </main>
+        {% block content %}{% endblock %}
 
-  <!-- Footer -->
-  <footer class="bg-white dark:bg-gray-800 border-t dark:border-gray-700 text-center text-gray-500 dark:text-gray-400 py-4 text-sm">
-    &copy; 2025 <span class="text-primary dark:text-primary-dark font-semibold">EduShare</span>. All rights reserved.
-  </footer>
+      </main>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-100 border-t border-gray-200 py-8">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <a href="#" class="flex items-center mb-4">
+              <span class="text-2xl font-['Pacifico'] text-primary">logo</span>
+            </a>
+            <p class="text-gray-600 text-sm">
+              پلتفرم آموزشی برای دانشجویان ایرانی با هدف اشتراک‌گذاری و دسترسی
+              به محتوای آموزشی با کیفیت
+            </p>
+          </div>
+          <div>
+            <h3 class="text-gray-800 font-bold mb-4">دسترسی سریع</h3>
+            <ul class="space-y-2 text-gray-600">
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >صفحه اصلی</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >دوره‌های آموزشی</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >آپلود محتوا</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >درباره ما</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >تماس با ما</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-gray-800 font-bold mb-4">قوانین و مقررات</h3>
+            <ul class="space-y-2 text-gray-600">
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >شرایط استفاده</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >حریم خصوصی</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >قوانین آپلود محتوا</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >حقوق مؤلفین</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors"
+                  >گزارش تخلف</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-gray-800 font-bold mb-4">عضویت در خبرنامه</h3>
+            <p class="text-gray-600 text-sm mb-4">
+              برای دریافت آخرین اخبار و بروزرسانی‌ها، در خبرنامه ما عضو شوید
+            </p>
+            <div class="flex">
+              <input
+                type="email"
+                placeholder="ایمیل خود را وارد کنید"
+                class="bg-[#272727] border-none text-white py-2 px-4 rounded-r-md focus:outline-none flex-grow"
+              />
+              <button
+                class="bg-primary text-white py-2 px-4 rounded-l-md hover:bg-red-700 transition-colors whitespace-nowrap !rounded-button"
+              >
+                عضویت
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-8 pt-8 border-t border-[#272727] flex flex-col md:flex-row justify-between items-center"
+        >
+          <p class="text-gray-400 text-sm mb-4 md:mb-0">
+            © ۱۴۰۴ تمامی حقوق محفوظ است.
+          </p>
+          <div class="flex space-x-4 space-x-reverse">
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <div class="w-8 h-8 flex items-center justify-center">
+                <i class="ri-instagram-line ri-lg"></i>
+              </div>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <div class="w-8 h-8 flex items-center justify-center">
+                <i class="ri-telegram-line ri-lg"></i>
+              </div>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <div class="w-8 h-8 flex items-center justify-center">
+                <i class="ri-linkedin-line ri-lg"></i>
+              </div>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <div class="w-8 h-8 flex items-center justify-center">
+                <i class="ri-twitter-x-line ri-lg"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script id="dropdown-handlers">
+      document.addEventListener("DOMContentLoaded", function () {
+        // User dropdown
+        const userMenuButton = document.getElementById("user-menu-button");
+        const userDropdown = document.getElementById("user-dropdown");
 
-  <!-- Mobile Menu Toggle Script & Dark Mode Toggle Script -->
-  <script>
-    const toggleButton = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const openIcon = document.getElementById('menu-open');
-    const closeIcon = document.getElementById('menu-close');
+        userMenuButton.addEventListener("click", function () {
+          userDropdown.classList.toggle("show");
+        });
+        
+        // Close dropdowns when clicking outside
+        window.addEventListener("click", function (event) {
+          if (
+            !event.target.matches("#user-menu-button") &&
+            !userMenuButton.contains(event.target)
+          ) {
+            if (userDropdown.classList.contains("show")) {
+              userDropdown.classList.remove("show");
+            }
+          }
+        });
+      });
+    </script>
+    <script id="sidebarNavigation">
+      document.addEventListener("DOMContentLoaded", function () {
+        const sidebarItems = document.querySelectorAll(".sidebar-item");
+        sidebarItems.forEach((item) => {
+          item.addEventListener("click", function (e) {
+            e.preventDefault();
+            sidebarItems.forEach((i) => i.classList.remove("active"));
+            this.classList.add("active");
+          });
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+        const labels = sidebar.querySelectorAll(".sidebar-label");
+        const icons = sidebar.querySelectorAll(".sidebar-icon");
+        labels.forEach(label => {
+          label.classList.add("hidden");
+        });
+        sidebar.classList.add("w-[110px]");
 
-    toggleButton.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-      openIcon.classList.toggle('hidden');
-      closeIcon.classList.toggle('hidden');
-    });
+        icons.forEach(label => {
+          label.classList.add("animate-float");
+        });
+      });
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const labels = sidebar.querySelectorAll(".sidebar-label");
+        const icons = sidebar.querySelectorAll(".sidebar-icon");
+        sidebar.classList.toggle("w-64");
+        sidebar.classList.toggle("w-[110px]");
 
-    // Dark Mode Toggle
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-    const htmlElement = document.documentElement;
-    const darkIcon = document.getElementById('theme-toggle-dark-icon');
-    const lightIcon = document.getElementById('theme-toggle-light-icon');
-    const darkIconMobile = document.getElementById('theme-toggle-dark-icon-mobile');
-    const lightIconMobile = document.getElementById('theme-toggle-light-icon-mobile');
-
-    function updateIcons() {
-      if (htmlElement.classList.contains('dark')) {
-        darkIcon.classList.add('hidden');
-        lightIcon.classList.remove('hidden');
-        darkIconMobile.classList.add('hidden');
-        lightIconMobile.classList.remove('hidden');
-      } else {
-        darkIcon.classList.remove('hidden');
-        lightIcon.classList.add('hidden');
-        darkIconMobile.classList.remove('hidden');
-        lightIconMobile.classList.add('hidden');
+        labels.forEach(label => {
+          label.classList.toggle("hidden");
+        });
+        icons.forEach(label => {
+          label.classList.toggle("animate-float");
+        });
       }
-    }
-
-    function toggleDarkMode() {
-      htmlElement.classList.toggle('dark');
-      localStorage.theme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
-      updateIcons();
-    }
-
-    themeToggle.addEventListener('click', toggleDarkMode);
-    themeToggleMobile.addEventListener('click', toggleDarkMode);
-
-    // Initialize theme based on preference or localStorage
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      htmlElement.classList.add('dark');
-    } else {
-      htmlElement.classList.remove('dark');
-    }
-    updateIcons();
-  </script>
-</body>
+    </script>
+    {% block script %}{% endblock %}
+  </body>
 </html>

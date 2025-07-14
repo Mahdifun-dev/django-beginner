@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Accessibility: Skip Link -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-white px-2 py-1 rounded">Skip to content</a>
+  <title>{% block title %}EduShare{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Fonts: Using Google Fonts for better readability -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#2563eb', 'primary-dark': '#1f40b0' },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex flex-col font-sans">
+
+  <!-- Header / Navbar -->
+  <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-4">
+        <!-- Logo -->
+        <a href="{% url 'home' %}" class="text-2xl font-bold text-primary dark:text-primary-dark tracking-wide">EduShare</a>
+        
+        <!-- Desktop Menu -->
+        <nav aria-label="Primary" class="hidden md:flex space-x-6 items-center">
+          <a href="{% url 'home' %}"
+             class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 {% if request.resolver_match.url_name == 'home' %}font-semibold{% endif %}">
+            Home
+          </a>
+          <a href="{% url 'resource_list' %}"
+             class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 {% if request.resolver_match.url_name == 'resource_list' %}font-semibold{% endif %}">
+            Resources
+          </a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'upload_resource' %}"
+               class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+              Upload
+            </a>
+            {% if user.is_staff %}
+              <a href="{% url 'pending_resources' %}"
+                 class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300 font-medium transition focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50">
+                🕒 Pending
+              </a>
+            {% endif %}
+            <form action="{% url 'logout' %}" method="post" class="inline">
+              {% csrf_token %}
+              <button type="submit"
+                      class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600 font-medium transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                Logout
+              </button>
+            </form>
+            <span class="ml-4 text-gray-500 dark:text-gray-400 text-sm">Hi, <span class="font-medium">{{ user.username }}</span></span>
+          {% else %}
+            <a href="{% url 'login' %}" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Login</a>
+            <a href="{% url 'signup' %}" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Sign up</a>
+          {% endif %}
+          <!-- Dark Mode Toggle -->
+          <button id="theme-toggle" aria-label="Toggle Dark Mode" class="ml-4 focus:outline-none">
+            <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 5a5 5 0 100 10A5 5 0 0010 5z"></path></svg>
+            <svg id="theme-toggle-dark-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293a8 8 0 11-10.586-10.586 8.001 8.001 0 0010.586 10.586z"></path></svg>
+          </button>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden">
+          <button id="menu-toggle" class="focus:outline-none" aria-label="Toggle navigation menu">
+            <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path id="menu-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16" />
+              <path id="menu-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <nav id="mobile-menu" class="hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+      <div class="px-4 py-3 space-y-2">
+        <a href="{% url 'home' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Home</a>
+        <a href="{% url 'resource_list' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Resources</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'upload_resource' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Upload</a>
+          {% if user.is_staff %}
+            <a href="{% url 'pending_resources' %}" class="block text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50">🕒 Pending</a>
+          {% endif %}
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="w-full text-left text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">Logout</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Login</a>
+          <a href="{% url 'signup' %}" class="block text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">Sign up</a>
+        {% endif %}
+        <!-- Dark Mode Toggle Mobile -->
+        <button id="theme-toggle-mobile" aria-label="Toggle Dark Mode" class="block mt-2 focus:outline-none">
+          <svg id="theme-toggle-light-icon-mobile" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 5a5 5 0 100 10A5 5 0 0010 5z"></path></svg>
+          <svg id="theme-toggle-dark-icon-mobile" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293a8 8 0 11-10.586-10.586 8.001 8.001 0 0010.586 10.586z"></path></svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+
+  <!-- Mobile Menu Toggle Script & Dark Mode Toggle Script -->
+  <script>
+    const toggleButton = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const openIcon = document.getElementById('menu-open');
+    const closeIcon = document.getElementById('menu-close');
+
+    toggleButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      openIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    });
+
+    // Dark Mode Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+    const htmlElement = document.documentElement;
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    const darkIconMobile = document.getElementById('theme-toggle-dark-icon-mobile');
+    const lightIconMobile = document.getElementById('theme-toggle-light-icon-mobile');
+
+    function updateIcons() {
+      if (htmlElement.classList.contains('dark')) {
+        darkIcon.classList.add('hidden');
+        lightIcon.classList.remove('hidden');
+        darkIconMobile.classList.add('hidden');
+        lightIconMobile.classList.remove('hidden');
+      } else {
+        darkIcon.classList.remove('hidden');
+        lightIcon.classList.add('hidden');
+        darkIconMobile.classList.remove('hidden');
+        lightIconMobile.classList.add('hidden');
+      }
+    }
+
+    function toggleDarkMode() {
+      htmlElement.classList.toggle('dark');
+      localStorage.theme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
+      updateIcons();
+    }
+
+    themeToggle.addEventListener('click', toggleDarkMode);
+    themeToggleMobile.addEventListener('click', toggleDarkMode);
+
+    // Initialize theme based on preference or localStorage
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      htmlElement.classList.add('dark');
+    } else {
+      htmlElement.classList.remove('dark');
+    }
+    updateIcons();
+  </script>
+</body>
+</html>
