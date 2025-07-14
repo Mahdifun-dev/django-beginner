@@ -1,15 +1,287 @@
-{% extends 'base.html' %}
-{% block title %}Login{% endblock %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ورود به سیستم</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#1e88e5", secondary: "#f5f5f5" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-{% block content %}
-<h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
-<form method="post" class="max-w-md mx-auto bg-white p-6 rounded shadow-md space-y-4">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Login</button>
-</form>
-<p class="text-center mt-4 text-gray-500">
-    Don’t have an account?
-    <a href="{% url 'signup' %}" class="text-blue-600 hover:underline">Sign up</a>
-</p>
-{% endblock %}
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+
+      body {
+          font-family: 'Vazirmatn', sans-serif;
+          direction: rtl;
+      }
+
+      .login-container {
+          background-image: url('https://readdy.ai/api/search-image?query=modern%2520educational%2520environment%2520with%2520soft%2520blue%2520gradient%2520background%2C%2520minimal%2520design%2C%2520clean%2520workspace%2520with%2520subtle%2520educational%2520elements%2C%2520books%2C%2520and%2520technology%2520devices%2C%2520soft%2520lighting%2C%2520professional%2520atmosphere%2C%2520high%2520quality%2520render&width=1920&height=1080&seq=login-bg-1&orientation=landscape');
+          background-size: cover;
+          background-position: center;
+      }
+
+      input:focus {
+          outline: none;
+          border-color: #1e88e5;
+      }
+
+      input[type="checkbox"] {
+          appearance: none;
+          -webkit-appearance: none;
+          width: 18px;
+          height: 18px;
+          border: 2px solid #d1d5db;
+          border-radius: 4px;
+          outline: none;
+          cursor: pointer;
+          position: relative;
+      }
+
+      input[type="checkbox"]:checked {
+          background-color: #1e88e5;
+          border-color: #1e88e5;
+      }
+
+      input[type="checkbox"]:checked::after {
+          content: "";
+          position: absolute;
+          width: 5px;
+          height: 10px;
+          border: solid white;
+          border-width: 0 2px 2px 0;
+          top: 1px;
+          left: 5px;
+          transform: rotate(45deg);
+      }
+
+      .password-toggle {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+          color: #6b7280;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <header
+      class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm"
+    >
+      <div class="flex items-center justify-between px-4 py-2">
+        <!-- Menu and Logo -->
+        <div class="flex items-center gap-4">
+          <a href="{% url 'resources_list' %}" class="flex items-center">
+            <span class="text-2xl font-['Pacifico'] text-primary">logo</span>
+          </a>
+        </div>
+        <!-- Search Bar -->
+
+
+
+          <form method="get" action="{% url 'resources_list' %}" class="flex-grow max-w-2xl mx-4">
+            <div class="relative">
+              <input
+                type="search"
+                name="q"  
+                placeholder="جستجو..."
+                class="w-full bg-gray-50 border border-gray-200 text-gray-900 py-2 px-4 pr-10 rounded-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                value="{{ request.GET.q }}"
+              />
+              <div class="absolute left-3 top-1/2 transform -translate-y-1/2 flex gap-2">
+                <button type="submit"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary"
+                >
+                  <i class="ri-search-line ri-lg"></i>
+                </button>
+                <button type="button"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary"
+                >
+                  <i class="ri-mic-line ri-lg"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+        <!-- User Actions -->
+        <div class="flex items-center gap-2">
+            <button
+              class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            >
+              <i class="ri-notification-line ri-lg"></i>
+            </button>
+            <button
+              class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            >
+              <i class="ri-global-line ri-lg"></i>
+            </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main
+      class="login-container flex items-center justify-center min-h-[calc(100vh-64px)] py-8 px-4"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+        <div class="text-center mb-8">
+          <h1 class="text-2xl font-bold text-gray-800 mb-2">
+            ورود به حساب کاربری
+          </h1>
+          <p class="text-gray-600">برای دسترسی به دوره‌های آموزشی وارد شوید</p>
+        </div>
+
+        <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+          {% if form.errors %}
+            <div class="text-red-600 text-sm mb-4">
+              نام کاربری یا رمز اشتباه است.
+            </div>
+          {% endif %}
+          <div class="mb-6">
+            <label
+              for="email"
+              class="block text-sm font-medium text-gray-700 mb-2"
+              >ایمیل یا نام کاربری</label
+            >
+            <div class="relative">
+              <div
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              >
+                <div class="w-5 h-5 flex items-center justify-center">
+                  <i class="ri-user-line"></i>
+                </div>
+              </div>
+              <input
+                type="text"
+                id="email"
+                name="username"
+                class="w-full px-10 py-3 border border-gray-300 rounded-button text-gray-800 bg-white"
+                placeholder="ایمیل یا نام کاربری خود را وارد کنید"
+              />
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <div class="flex justify-between items-center mb-2">
+              <label
+                for="password"
+                class="block text-sm font-medium text-gray-700"
+                >رمز عبور</label
+              >
+              <a href="#" class="text-sm text-primary hover:text-primary/80"
+                >رمز عبور را فراموش کرده‌اید؟</a
+              >
+            </div>
+            <div class="relative">
+              <div
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              >
+                <div class="w-5 h-5 flex items-center justify-center">
+                  <i class="ri-lock-line"></i>
+                </div>
+              </div>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="w-full px-10 py-3 border border-gray-300 rounded-button text-gray-800 bg-white"
+                placeholder="رمز عبور خود را وارد کنید"
+              />
+              <div class="password-toggle">
+                <div class="w-5 h-5 flex items-center justify-center">
+                  <i class="ri-eye-line"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center mb-6">
+            <input type="checkbox" id="remember" class="mr-2" />
+            <label for="remember" class="text-sm text-gray-700 select-none"
+              >مرا به خاطر بسپار</label
+            >
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-primary text-white py-3 rounded-button font-medium hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap"
+          >
+            ورود به سیستم
+          </button>
+        </form>
+
+        <div class="mt-6 text-center">
+          <p class="text-gray-600">
+            حساب کاربری ندارید؟
+            <a href="{% url 'signup' %}" class="text-primary font-medium hover:text-primary/80"
+              >ثبت‌نام کنید</a
+            >
+          </p>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <p class="text-sm text-gray-500 text-center">
+            با ورود به سیستم، شما
+            <a href="#" class="text-primary">شرایط و قوانین</a> استفاده از خدمات
+            ما را می‌پذیرید.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <script id="password-toggle-script">
+      document.addEventListener("DOMContentLoaded", function () {
+        const passwordField = document.getElementById("password");
+        const toggleButton = document.querySelector(".password-toggle");
+
+        toggleButton.addEventListener("click", function () {
+          const type =
+            passwordField.getAttribute("type") === "password" ? "text" : "password";
+          passwordField.setAttribute("type", type);
+
+          const icon = toggleButton.querySelector("i");
+          if (type === "password") {
+            icon.classList.remove("ri-eye-off-line");
+            icon.classList.add("ri-eye-line");
+          } else {
+            icon.classList.remove("ri-eye-line");
+            icon.classList.add("ri-eye-off-line");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

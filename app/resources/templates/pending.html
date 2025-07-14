@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت درخواست‌های در انتظار</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16">
+</script>
+    <script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { primary: "#4F46E5", secondary: "#6366F1" },
+      borderRadius: {
+        none: "0px",
+        sm: "4px",
+        DEFAULT: "8px",
+        md: "12px",
+        lg: "16px",
+        xl: "20px",
+        "2xl": "24px",
+        "3xl": "32px",
+        full: "9999px",
+        button: "8px",
+      },
+    },
+  },
+};
+</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+        input[type="checkbox"]:checked {
+            background-color: #4F46E5;
+            border-color: #4F46E5;
+        }
+        input[type="checkbox"]:checked::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #4F46E5;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            z-index: 1;
+            border-radius: 8px;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f5f9;
+        }
+        .show {
+            display: block;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .request-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .request-details.open {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="hidden md:flex md:flex-shrink-0">
+            <div class="flex flex-col w-64 border-l">
+                <div class="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto bg-white">
+                    <div class="flex items-center flex-shrink-0 px-4 mb-5">
+                        <span class="text-2xl font-['Pacifico'] text-primary">logo</span>
+                    </div>
+                    <div class="mt-5 flex-grow flex flex-col">
+                        <nav class="flex-1 px-2 space-y-1">
+                            <a href="#" class="flex items-center px-4 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-100">
+                                <div class="w-6 h-6 flex items-center justify-center ml-3 text-gray-500">
+                                    <i class="ri-home-line"></i>
+                                </div>
+                                صفحه اصلی
+                            </a>
+                            <a href="#" class="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary rounded-md">
+                                <div class="w-6 h-6 flex items-center justify-center ml-3 text-white">
+                                    <i class="ri-time-line"></i>
+                                </div>
+                                درخواست‌های در انتظار
+                            </a>
+                            <a href="#" class="flex items-center px-4 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-100">
+                                <div class="w-6 h-6 flex items-center justify-center ml-3 text-gray-500">
+                                    <i class="ri-user-line"></i>
+                                </div>
+                                مدیریت کاربران
+                            </a>
+                            <a href="#" class="flex items-center px-4 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-100">
+                                <div class="w-6 h-6 flex items-center justify-center ml-3 text-gray-500">
+                                    <i class="ri-file-list-line"></i>
+                                </div>
+                                مدیریت محتوا
+                            </a>
+                            <a href="#" class="flex items-center px-4 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-100">
+                                <div class="w-6 h-6 flex items-center justify-center ml-3 text-gray-500">
+                                    <i class="ri-settings-line"></i>
+                                </div>
+                                تنظیمات
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top navbar -->
+            <div class="flex-shrink-0 bg-white border-b">
+                <div class="flex justify-between h-16">
+                    <div class="flex">
+                        <div class="flex-shrink-0 flex items-center px-4 md:hidden">
+                            <span class="text-2xl font-['Pacifico'] text-primary">logo</span>
+                        </div>
+                        <div class="hidden md:ml-6 md:flex md:items-center md:space-x-4 md:space-x-reverse">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                                        <i class="ri-search-line"></i>
+                                    </div>
+                                </div>
+                                <input type="text" class="block w-full pr-10 pl-3 py-2 border-gray-300 rounded-md leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm" placeholder="جستجو...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="mr-3 flex items-center">
+                            <button type="button" class="p-1 rounded-full text-gray-500 hover:text-gray-900 focus:outline-none">
+                                <div class="w-6 h-6 flex items-center justify-center">
+                                    <i class="ri-notification-3-line"></i>
+                                </div>
+                            </button>
+                            <button type="button" class="mr-3 p-1 rounded-full text-gray-500 hover:text-gray-900 focus:outline-none">
+                                <div class="w-6 h-6 flex items-center justify-center">
+                                    <i class="ri-message-3-line"></i>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="mr-3 relative">
+                            <div>
+                                <button type="button" id="user-menu-button" class="flex items-center max-w-xs rounded-full focus:outline-none" aria-expanded="false" aria-haspopup="true">
+                                    <img class="h-8 w-8 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20man%20with%20beard%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=1&orientation=squarish" alt="">
+                                    <span class="mr-2 text-sm font-medium text-gray-700">علی محمدی</span>
+                                    <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </div>
+                                </button>
+                            </div>
+                            <div id="user-dropdown" class="dropdown-content left-0 mt-2">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">پروفایل</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">تنظیمات</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">خروج</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Page content -->
+            <div class="flex-1 overflow-auto">
+                <div class="py-6 px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h1 class="text-2xl font-bold text-gray-900 mb-4 md:mb-0">درخواست‌های در انتظار تایید</h1>
+                        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 sm:space-x-reverse">
+                            <div class="relative inline-block text-right">
+                                <button id="filter-button" type="button" class="inline-flex justify-center items-center w-full rounded-button border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none whitespace-nowrap">
+                                    <div class="w-5 h-5 flex items-center justify-center ml-2">
+                                        <i class="ri-filter-3-line"></i>
+                                    </div>
+                                    فیلتر پیشرفته
+                                </button>
+                                <div id="filter-dropdown" class="dropdown-content left-0 mt-2 w-56">
+                                    <div class="py-1">
+                                        <div class="px-4 py-2">
+                                            <p class="text-sm font-medium text-gray-700 mb-2">نوع درخواست</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="ml-2">
+                                                    <span class="text-sm text-gray-700">منابع آموزشی</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="ml-2">
+                                                    <span class="text-sm text-gray-700">دوره‌های جدید</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="ml-2">
+                                                    <span class="text-sm text-gray-700">ویدیوهای آموزشی</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <hr class="my-2">
+                                        <div class="px-4 py-2">
+                                            <p class="text-sm font-medium text-gray-700 mb-2">وضعیت</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="ml-2">
+                                                    <span class="text-sm text-gray-700">در انتظار بررسی</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="ml-2">
+                                                    <span class="text-sm text-gray-700">در حال بررسی</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <hr class="my-2">
+                                        <div class="px-4 py-2">
+                                            <p class="text-sm font-medium text-gray-700 mb-2">تاریخ ثبت</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="ml-2">
+                                                    <span class="text-sm text-gray-700">امروز</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="ml-2">
+                                                    <span class="text-sm text-gray-700">هفته اخیر</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="ml-2">
+                                                    <span class="text-sm text-gray-700">ماه اخیر</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <hr class="my-2">
+                                        <div class="px-4 py-3">
+                                            <button type="button" class="w-full inline-flex justify-center rounded-button border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-indigo-700 focus:outline-none whitespace-nowrap">
+                                                اعمال فیلتر
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="relative inline-block text-right">
+                                <button id="sort-button" type="button" class="inline-flex justify-center items-center w-full rounded-button border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none whitespace-nowrap">
+                                    <div class="w-5 h-5 flex items-center justify-center ml-2">
+                                        <i class="ri-sort-desc"></i>
+                                    </div>
+                                    مرتب‌سازی
+                                </button>
+                                <div id="sort-dropdown" class="dropdown-content left-0 mt-2">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">جدیدترین</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">قدیمی‌ترین</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">اولویت بالا</a>
+                                </div>
+                            </div>
+                            <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-button shadow-sm text-white bg-primary hover:bg-indigo-700 focus:outline-none whitespace-nowrap">
+                                <div class="w-5 h-5 flex items-center justify-center ml-2">
+                                    <i class="ri-check-double-line"></i>
+                                </div>
+                                تایید همه
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="border-b border-gray-200 mb-6">
+                        <nav class="-mb-px flex space-x-8 space-x-reverse">
+                            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 border-primary font-medium text-sm text-primary" data-tab="all">
+                                همه درخواست‌ها
+                                <span class="mr-2 py-0.5 px-2.5 text-xs font-medium rounded-full bg-primary bg-opacity-10 text-primary">۲۴</span>
+                            </button>
+                            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="educational">
+                                منابع آموزشی
+                                <span class="mr-2 py-0.5 px-2.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">۱۲</span>
+                            </button>
+                            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="courses">
+                                دوره‌های جدید
+                                <span class="mr-2 py-0.5 px-2.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">۸</span>
+                            </button>
+                            <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="videos">
+                                ویدیوهای آموزشی
+                                <span class="mr-2 py-0.5 px-2.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">۴</span>
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Tab content -->
+                    <div id="all-tab" class="tab-content active">
+                        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+                            <ul class="divide-y divide-gray-200">
+                                <!-- Request 1 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20woman%20with%20hijab%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=2&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">فاطمه حسینی</p>
+                                                        <p class="text-xs text-gray-500">استاد دانشگاه تهران</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        در انتظار بررسی
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-book-open-line"></i>
+                                                        </div>
+                                                        منبع آموزشی: آموزش ریاضیات پیشرفته - مشتق و انتگرال
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۵ خرداد ۱۴۰۴ - ۱۰:۳۰
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <div class="bg-gray-50 p-4 rounded-md">
+                                                    <h4 class="text-sm font-medium text-gray-900 mb-2">توضیحات درخواست:</h4>
+                                                    <p class="text-sm text-gray-600 mb-4">
+                                                        این منبع آموزشی شامل مجموعه‌ای از مباحث پیشرفته ریاضی در زمینه حساب دیفرانسیل و انتگرال است. مناسب برای دانشجویان رشته‌های مهندسی و علوم پایه. محتوای این دوره شامل مشتق توابع چند متغیره، انتگرال‌های دوگانه و سه‌گانه، و کاربردهای آن‌ها در مسائل فیزیکی و مهندسی است.
+                                                    </p>
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">دسته‌بندی:</h5>
+                                                            <p class="text-sm text-gray-900">ریاضیات پیشرفته</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">سطح آموزشی:</h5>
+                                                            <p class="text-sm text-gray-900">پیشرفته</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">زبان منبع:</h5>
+                                                            <p class="text-sm text-gray-900">فارسی</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">حجم محتوا:</h5>
+                                                            <p class="text-sm text-gray-900">۲۵۰ صفحه</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 pt-4 border-t border-gray-200">
+                                                        <div class="flex items-center mb-3 sm:mb-0">
+                                                            <label class="mr-2 text-sm text-gray-700">وضعیت:</label>
+                                                            <select class="border-gray-300 rounded-md text-sm focus:ring-primary focus:border-primary">
+                                                                <option>در انتظار بررسی</option>
+                                                                <option>در حال بررسی</option>
+                                                                <option>نیاز به اصلاح</option>
+                                                                <option>تایید شده</option>
+                                                                <option>رد شده</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="flex space-x-3 space-x-reverse">
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-button shadow-sm text-white bg-primary hover:bg-indigo-700 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-check-line"></i>
+                                                                </div>
+                                                                تایید درخواست
+                                                            </button>
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-button shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-message-2-line"></i>
+                                                                </div>
+                                                                ارسال پیام
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <!-- Request 2 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20man%20with%20glasses%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=3&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">محمد رضایی</p>
+                                                        <p class="text-xs text-gray-500">مدرس برنامه‌نویسی</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                        در حال بررسی
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-video-line"></i>
+                                                        </div>
+                                                        ویدیوی آموزشی: آموزش برنامه‌نویسی پایتون - ساختارهای داده پیشرفته
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۴ خرداد ۱۴۰۴ - ۱۵:۴۵
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <div class="bg-gray-50 p-4 rounded-md">
+                                                    <h4 class="text-sm font-medium text-gray-900 mb-2">توضیحات درخواست:</h4>
+                                                    <p class="text-sm text-gray-600 mb-4">
+                                                        این ویدیوی آموزشی به بررسی ساختارهای داده پیشرفته در زبان برنامه‌نویسی پایتون می‌پردازد. در این ویدیو، مفاهیم پیشرفته مانند لیست‌های تودرتو، دیکشنری‌های پیچیده، مجموعه‌ها و کاربردهای آن‌ها در حل مسائل واقعی برنامه‌نویسی مورد بررسی قرار می‌گیرد. همچنین به بهینه‌سازی کد و افزایش کارایی برنامه با استفاده از ساختارهای داده مناسب پرداخته می‌شود.
+                                                    </p>
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">مدت زمان:</h5>
+                                                            <p class="text-sm text-gray-900">۲ ساعت و ۳۰ دقیقه</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">سطح آموزشی:</h5>
+                                                            <p class="text-sm text-gray-900">متوسط تا پیشرفته</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">زبان ویدیو:</h5>
+                                                            <p class="text-sm text-gray-900">فارسی</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">دارای زیرنویس:</h5>
+                                                            <p class="text-sm text-gray-900">بله (فارسی و انگلیسی)</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 pt-4 border-t border-gray-200">
+                                                        <div class="flex items-center mb-3 sm:mb-0">
+                                                            <label class="mr-2 text-sm text-gray-700">وضعیت:</label>
+                                                            <select class="border-gray-300 rounded-md text-sm focus:ring-primary focus:border-primary">
+                                                                <option>در انتظار بررسی</option>
+                                                                <option selected>در حال بررسی</option>
+                                                                <option>نیاز به اصلاح</option>
+                                                                <option>تایید شده</option>
+                                                                <option>رد شده</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="flex space-x-3 space-x-reverse">
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-button shadow-sm text-white bg-primary hover:bg-indigo-700 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-check-line"></i>
+                                                                </div>
+                                                                تایید درخواست
+                                                            </button>
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-button shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-message-2-line"></i>
+                                                                </div>
+                                                                ارسال پیام
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <!-- Request 3 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20woman%20with%20light%20makeup%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=4&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">سارا کریمی</p>
+                                                        <p class="text-xs text-gray-500">متخصص شیمی آلی</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        در انتظار بررسی
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-book-open-line"></i>
+                                                        </div>
+                                                        منبع آموزشی: آزمایشگاه شیمی آلی - واکنش‌های استرس شدن
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۳ خرداد ۱۴۰۴ - ۰۹:۱۵
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <div class="bg-gray-50 p-4 rounded-md">
+                                                    <h4 class="text-sm font-medium text-gray-900 mb-2">توضیحات درخواست:</h4>
+                                                    <p class="text-sm text-gray-600 mb-4">
+                                                        این منبع آموزشی شامل دستورالعمل‌های آزمایشگاهی برای انجام واکنش‌های استری شدن در شیمی آلی است. در این مجموعه، دانشجویان با روش‌های مختلف سنتز استرها، شرایط واکنش، مکانیسم‌های واکنش و روش‌های جداسازی و خالص‌سازی محصولات آشنا می‌شوند. همچنین نکات ایمنی مهم برای کار با مواد شیمیایی و تجهیزات آزمایشگاهی نیز ارائه شده است.
+                                                    </p>
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">دسته‌بندی:</h5>
+                                                            <p class="text-sm text-gray-900">شیمی آلی</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">سطح آموزشی:</h5>
+                                                            <p class="text-sm text-gray-900">کارشناسی</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">زبان منبع:</h5>
+                                                            <p class="text-sm text-gray-900">فارسی</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">تعداد آزمایش‌ها:</h5>
+                                                            <p class="text-sm text-gray-900">۸ آزمایش</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 pt-4 border-t border-gray-200">
+                                                        <div class="flex items-center mb-3 sm:mb-0">
+                                                            <label class="mr-2 text-sm text-gray-700">وضعیت:</label>
+                                                            <select class="border-gray-300 rounded-md text-sm focus:ring-primary focus:border-primary">
+                                                                <option>در انتظار بررسی</option>
+                                                                <option>در حال بررسی</option>
+                                                                <option>نیاز به اصلاح</option>
+                                                                <option>تایید شده</option>
+                                                                <option>رد شده</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="flex space-x-3 space-x-reverse">
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-button shadow-sm text-white bg-primary hover:bg-indigo-700 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-check-line"></i>
+                                                                </div>
+                                                                تایید درخواست
+                                                            </button>
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-button shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-message-2-line"></i>
+                                                                </div>
+                                                                ارسال پیام
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <!-- Request 4 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20man%20with%20beard%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=5&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">امیر صادقی</p>
+                                                        <p class="text-xs text-gray-500">مهندس عمران</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        در انتظار بررسی
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-book-open-line"></i>
+                                                        </div>
+                                                        دوره آموزشی: اصول طراحی سازه‌های بتنی
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۲ خرداد ۱۴۰۴ - ۱۴:۲۰
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <div class="bg-gray-50 p-4 rounded-md">
+                                                    <h4 class="text-sm font-medium text-gray-900 mb-2">توضیحات درخواست:</h4>
+                                                    <p class="text-sm text-gray-600 mb-4">
+                                                        این دوره آموزشی به بررسی اصول و مبانی طراحی سازه‌های بتنی مطابق با آخرین آیین‌نامه‌های ملی ساختمان می‌پردازد. در این دوره، مفاهیم اساسی مقاومت مصالح، تحلیل سازه، طراحی تیرها، ستون‌ها، دال‌ها و پی‌ها آموزش داده می‌شود. همچنین نرم‌افزارهای تخصصی مهندسی عمران برای مدل‌سازی و تحلیل سازه‌های بتنی نیز معرفی می‌گردد.
+                                                    </p>
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">مدت دوره:</h5>
+                                                            <p class="text-sm text-gray-900">۱۸ جلسه (۳۶ ساعت)</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">سطح آموزشی:</h5>
+                                                            <p class="text-sm text-gray-900">متوسط تا پیشرفته</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">پیش‌نیازها:</h5>
+                                                            <p class="text-sm text-gray-900">مقاومت مصالح، تحلیل سازه‌ها</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">شیوه ارائه:</h5>
+                                                            <p class="text-sm text-gray-900">آنلاین + پروژه عملی</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 pt-4 border-t border-gray-200">
+                                                        <div class="flex items-center mb-3 sm:mb-0">
+                                                            <label class="mr-2 text-sm text-gray-700">وضعیت:</label>
+                                                            <select class="border-gray-300 rounded-md text-sm focus:ring-primary focus:border-primary">
+                                                                <option>در انتظار بررسی</option>
+                                                                <option>در حال بررسی</option>
+                                                                <option>نیاز به اصلاح</option>
+                                                                <option>تایید شده</option>
+                                                                <option>رد شده</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="flex space-x-3 space-x-reverse">
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-button shadow-sm text-white bg-primary hover:bg-indigo-700 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-check-line"></i>
+                                                                </div>
+                                                                تایید درخواست
+                                                            </button>
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-button shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-message-2-line"></i>
+                                                                </div>
+                                                                ارسال پیام
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <!-- Request 5 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20woman%20with%20light%20hijab%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=6&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">زهرا احمدی</p>
+                                                        <p class="text-xs text-gray-500">متخصص زیست‌شناسی</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                                        نیاز به اصلاح
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-book-open-line"></i>
+                                                        </div>
+                                                        دوره آموزشی: زیست‌شناسی سلولی و مولکولی
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۰ خرداد ۱۴۰۴ - ۱۱:۱۰
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <div class="bg-gray-50 p-4 rounded-md">
+                                                    <h4 class="text-sm font-medium text-gray-900 mb-2">توضیحات درخواست:</h4>
+                                                    <p class="text-sm text-gray-600 mb-4">
+                                                        این دوره آموزشی به بررسی مفاهیم پایه و پیشرفته زیست‌شناسی سلولی و مولکولی می‌پردازد. در این دوره، ساختار و عملکرد سلول‌ها، اندامک‌های سلولی، DNA، RNA، پروتئین‌ها و فرآیندهای همانندسازی، رونویسی و ترجمه مورد بررسی قرار می‌گیرد. همچنین تکنیک‌های آزمایشگاهی رایج در زیست‌شناسی مولکولی مانند PCR، الکتروفورز و کلونینگ نیز آموزش داده می‌شود.
+                                                    </p>
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">مدت دوره:</h5>
+                                                            <p class="text-sm text-gray-900">۱۵ جلسه (۳۰ ساعت)</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">سطح آموزشی:</h5>
+                                                            <p class="text-sm text-gray-900">کارشناسی</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">پیش‌نیازها:</h5>
+                                                            <p class="text-sm text-gray-900">زیست‌شناسی عمومی</p>
+                                                        </div>
+                                                        <div>
+                                                            <h5 class="text-xs font-medium text-gray-700 mb-1">شیوه ارائه:</h5>
+                                                            <p class="text-sm text-gray-900">آنلاین + آزمایشگاه مجازی</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="bg-orange-50 border border-orange-200 rounded-md p-3 mb-4">
+                                                        <h5 class="text-sm font-medium text-orange-800 mb-1 flex items-center">
+                                                            <div class="w-5 h-5 flex items-center justify-center ml-1 text-orange-500">
+                                                                <i class="ri-error-warning-line"></i>
+                                                            </div>
+                                                            نیاز به اصلاح
+                                                        </h5>
+                                                        <p class="text-sm text-orange-700">
+                                                            لطفاً سرفصل‌های دوره را به صورت دقیق‌تر و با جزئیات بیشتر ارائه دهید. همچنین منابع علمی مورد استفاده در دوره را ذکر کنید. تصاویر و انیمیشن‌های آموزشی بیشتری برای درک بهتر مفاهیم پیچیده مولکولی نیاز است.
+                                                        </p>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 pt-4 border-t border-gray-200">
+                                                        <div class="flex items-center mb-3 sm:mb-0">
+                                                            <label class="mr-2 text-sm text-gray-700">وضعیت:</label>
+                                                            <select class="border-gray-300 rounded-md text-sm focus:ring-primary focus:border-primary">
+                                                                <option>در انتظار بررسی</option>
+                                                                <option>در حال بررسی</option>
+                                                                <option selected>نیاز به اصلاح</option>
+                                                                <option>تایید شده</option>
+                                                                <option>رد شده</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="flex space-x-3 space-x-reverse">
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-button shadow-sm text-white bg-primary hover:bg-indigo-700 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-check-line"></i>
+                                                                </div>
+                                                                تایید درخواست
+                                                            </button>
+                                                            <button type="button" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-button shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none whitespace-nowrap">
+                                                                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                                                                    <i class="ri-message-2-line"></i>
+                                                                </div>
+                                                                ارسال پیام
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-4 rounded-md">
+                            <div class="flex-1 flex justify-between sm:hidden">
+                                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                    قبلی
+                                </a>
+                                <a href="#" class="mr-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                    بعدی
+                                </a>
+                            </div>
+                            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-700">
+                                        نمایش
+                                        <span class="font-medium">۱</span>
+                                        تا
+                                        <span class="font-medium">۵</span>
+                                        از
+                                        <span class="font-medium">۲۴</span>
+                                        نتیجه
+                                    </p>
+                                </div>
+                                <div>
+                                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px -space-x-reverse" aria-label="Pagination">
+                                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">قبلی</span>
+                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                <i class="ri-arrow-right-s-line"></i>
+                                            </div>
+                                        </a>
+                                        <a href="#" aria-current="page" class="z-10 bg-primary border-primary text-white relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                            ۱
+                                        </a>
+                                        <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                            ۲
+                                        </a>
+                                        <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                            ۳
+                                        </a>
+                                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                            ...
+                                        </span>
+                                        <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                            ۵
+                                        </a>
+                                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">بعدی</span>
+                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                <i class="ri-arrow-left-s-line"></i>
+                                            </div>
+                                        </a>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="educational-tab" class="tab-content">
+                        <!-- Educational resources content -->
+                        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+                            <ul class="divide-y divide-gray-200">
+                                <!-- Educational Request 1 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20woman%20with%20hijab%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=2&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">فاطمه حسینی</p>
+                                                        <p class="text-xs text-gray-500">استاد دانشگاه تهران</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        در انتظار بررسی
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-book-open-line"></i>
+                                                        </div>
+                                                        منبع آموزشی: آموزش ریاضیات پیشرفته - مشتق و انتگرال
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۵ خرداد ۱۴۰۴ - ۱۰:۳۰
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <!-- Details content -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <!-- Educational Request 2 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20woman%20with%20light%20makeup%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=4&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">سارا کریمی</p>
+                                                        <p class="text-xs text-gray-500">متخصص شیمی آلی</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        در انتظار بررسی
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-book-open-line"></i>
+                                                        </div>
+                                                        منبع آموزشی: آزمایشگاه شیمی آلی - واکنش‌های استرس شدن
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۳ خرداد ۱۴۰۴ - ۰۹:۱۵
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <!-- Details content -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="courses-tab" class="tab-content">
+                        <!-- Courses content -->
+                        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+                            <ul class="divide-y divide-gray-200">
+                                <!-- Course Request 1 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20man%20with%20beard%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=5&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">امیر صادقی</p>
+                                                        <p class="text-xs text-gray-500">مهندس عمران</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        در انتظار بررسی
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-book-open-line"></i>
+                                                        </div>
+                                                        دوره آموزشی: اصول طراحی سازه‌های بتنی
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۲ خرداد ۱۴۰۴ - ۱۴:۲۰
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <!-- Details content -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <!-- Course Request 2 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20woman%20with%20light%20hijab%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=6&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">زهرا احمدی</p>
+                                                        <p class="text-xs text-gray-500">متخصص زیست‌شناسی</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                                        نیاز به اصلاح
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-book-open-line"></i>
+                                                        </div>
+                                                        دوره آموزشی: زیست‌شناسی سلولی و مولکولی
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۰ خرداد ۱۴۰۴ - ۱۱:۱۰
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <!-- Details content -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="videos-tab" class="tab-content">
+                        <!-- Videos content -->
+                        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+                            <ul class="divide-y divide-gray-200">
+                                <!-- Video Request 1 -->
+                                <li>
+                                    <div class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" class="ml-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img class="h-10 w-10 rounded-full" src="https://readdy.ai/api/search-image?query=professional%20profile%20picture%20of%20a%20middle%20eastern%20man%20with%20glasses%2C%20professional%20attire%2C%20neutral%20background%2C%20high%20quality&width=100&height=100&seq=3&orientation=squarish" alt="">
+                                                    </div>
+                                                    <div class="mr-4">
+                                                        <p class="text-sm font-medium text-primary">محمد رضایی</p>
+                                                        <p class="text-xs text-gray-500">مدرس برنامه‌نویسی</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                        در حال بررسی
+                                                    </span>
+                                                    <div class="mr-4 flex">
+                                                        <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-check-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="mr-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-close-line"></i>
+                                                            </div>
+                                                        </button>
+                                                        <button type="button" class="toggle-details mr-2 inline-flex items-center p-1 border border-gray-300 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                                <i class="ri-arrow-down-s-line"></i>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                            <i class="ri-video-line"></i>
+                                                        </div>
+                                                        ویدیوی آموزشی: آموزش برنامه‌نویسی پایتون - ساختارهای داده پیشرفته
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <div class="w-5 h-5 flex items-center justify-center ml-1 text-gray-400">
+                                                        <i class="ri-time-line"></i>
+                                                    </div>
+                                                    <p>
+                                                        ارسال شده در ۱۴ خرداد ۱۴۰۴ - ۱۵:۴۵
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="request-details mt-4 border-t pt-4">
+                                                <!-- Details content -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script id="dropdown-handlers">
+document.addEventListener("DOMContentLoaded", function () {
+  // User dropdown
+  const userMenuButton = document.getElementById("user-menu-button");
+  const userDropdown = document.getElementById("user-dropdown");
+
+  userMenuButton.addEventListener("click", function () {
+    userDropdown.classList.toggle("show");
+  });
+
+  // Filter dropdown
+  const filterButton = document.getElementById("filter-button");
+  const filterDropdown = document.getElementById("filter-dropdown");
+
+  filterButton.addEventListener("click", function () {
+    filterDropdown.classList.toggle("show");
+  });
+
+  // Sort dropdown
+  const sortButton = document.getElementById("sort-button");
+  const sortDropdown = document.getElementById("sort-dropdown");
+
+  sortButton.addEventListener("click", function () {
+    sortDropdown.classList.toggle("show");
+  });
+
+  // Close dropdowns when clicking outside
+  window.addEventListener("click", function (event) {
+    if (
+      !event.target.matches("#user-menu-button") &&
+      !userMenuButton.contains(event.target)
+    ) {
+      if (userDropdown.classList.contains("show")) {
+        userDropdown.classList.remove("show");
+      }
+    }
+
+    if (
+      !event.target.matches("#filter-button") &&
+      !filterButton.contains(event.target)
+    ) {
+      if (filterDropdown.classList.contains("show")) {
+        filterDropdown.classList.remove("show");
+      }
+    }
+
+    if (
+      !event.target.matches("#sort-button") &&
+      !sortButton.contains(event.target)
+    ) {
+      if (sortDropdown.classList.contains("show")) {
+        sortDropdown.classList.remove("show");
+      }
+    }
+  });
+});
+</script>
+
+    <script id="tab-handlers">
+document.addEventListener("DOMContentLoaded", function () {
+  const tabButtons = document.querySelectorAll(".tab-button");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const tabId = this.getAttribute("data-tab");
+
+      // Remove active class from all buttons and tabs
+      tabButtons.forEach((btn) => {
+        btn.classList.remove("border-primary", "text-primary");
+        btn.classList.add("border-transparent", "text-gray-500");
+      });
+
+      tabContents.forEach((content) => {
+        content.classList.remove("active");
+      });
+
+      // Add active class to current button and tab
+      this.classList.add("border-primary", "text-primary");
+      this.classList.remove("border-transparent", "text-gray-500");
+
+      document.getElementById(`${tabId}-tab`).classList.add("active");
+    });
+  });
+});
+</script>
+
+    <script id="details-toggle">
+document.addEventListener("DOMContentLoaded", function () {
+  const detailsToggles = document.querySelectorAll(".toggle-details");
+
+  detailsToggles.forEach((toggle) => {
+    toggle.addEventListener("click", function () {
+      const requestItem = this.closest("li");
+      const detailsSection = requestItem.querySelector(".request-details");
+
+      detailsSection.classList.toggle("open");
+
+      // Change icon based on state
+      const icon = this.querySelector("i");
+      if (detailsSection.classList.contains("open")) {
+        icon.classList.remove("ri-arrow-down-s-line");
+        icon.classList.add("ri-arrow-up-s-line");
+      } else {
+        icon.classList.remove("ri-arrow-up-s-line");
+        icon.classList.add("ri-arrow-down-s-line");
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>

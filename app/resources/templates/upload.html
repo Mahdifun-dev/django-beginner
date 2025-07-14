@@ -1,0 +1,817 @@
+{% extends 'base.html' %}
+
+    {% block head %}
+    <style>
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      }
+      .dropzone-active {
+      border-color: #3b82f6;
+      background-color: rgba(59, 130, 246, 0.05);
+      }
+      .file-preview-enter {
+      opacity: 0;
+      transform: translateY(10px);
+      }
+      .file-preview-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 300ms, transform 300ms;
+      }
+      .file-preview-exit {
+      opacity: 1;
+      }
+      .file-preview-exit-active {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 300ms, transform 300ms;
+      }
+      .progress-bar {
+      transition: width 0.3s ease;
+      }
+    </style>
+    {% endblock head %}
+    
+    {% block content %}
+      <form method="post" enctype="multipart/form-data" class="bg-gray-50 container mx-auto px-4 py-8 max-w-5xl">
+        {% csrf_token %}
+
+      <header class="mb-8 text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">آپلود فایل</h1>
+        <p class="text-gray-600 mb-1">
+          فرمت‌های مجاز: JPG, PNG, PDF, DOC, DOCX, XLS, XLSX
+        </p>
+        <p class="text-gray-600">حداکثر حجم فایل: ۱۰ مگابایت</p>
+      </header>
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div
+          id="dropzone"
+          class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-8 cursor-pointer hover:bg-blue-50 hover:border-primary transition-all duration-200"
+        >
+          <div class="flex flex-col items-center justify-center gap-4">
+            <div
+              class="w-16 h-16 flex items-center justify-center text-primary"
+            >
+              <i class="ri-upload-cloud-line ri-3x"></i>
+            </div>
+            <div>
+              <p class="text-lg font-medium text-gray-700 mb-2">
+                فایل‌ها را اینجا رها کنید
+              </p>
+              <p class="text-gray-500">یا برای انتخاب فایل کلیک کنید</p>
+            </div>
+          </div>
+          <input type="file" id="file-input" class="hidden" name="files" multiple />
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div>
+            <label
+              for="title"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >عنوان <span class="text-red-500">*</span></label
+            >
+            <input
+              type="text"
+              id="title"
+              name="title"
+              class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="عنوان فایل را وارد کنید"
+              required
+            />
+          </div>
+      <div>
+        <label for="tags" class="block text-sm font-medium text-gray-700 mb-1">برچسب‌ها</label>
+        <input type="text" id="tags" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="مثال: پایتون، کنکور، نهم" />
+      </div>
+      <div>
+        <label for="instructor" class="block text-sm font-medium text-gray-700 mb-1">مدرس / ارائه‌دهنده</label>
+        <input type="text" id="instructor" name="instructor" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="نام مدرس یا منبع" />
+      </div>
+      <div>
+        <label for="external-url" class="block text-sm font-medium text-gray-700 mb-1">لینک منبع خارجی (اختیاری)</label>
+        <input type="url" id="external-url" name="external_url" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="https://example.com" />
+      </div>
+    </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3"
+              >تنظیمات حریم خصوصی</label
+            >
+            <div class="space-y-2">
+              <div class="flex items-center">
+                <input
+                  type="radio"
+                  id="privacy-public"
+                  name="privacy"
+                  value="public"
+                  class="opacity-0 absolute h-5 w-5 cursor-pointer"
+                />
+                <div
+                  class="bg-white border-2 rounded-full border-gray-300 w-5 h-5 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-primary"
+                >
+                  <svg
+                    class="fill-current hidden w-3 h-3 text-primary pointer-events-none"
+                    viewBox="0 0 20 20"
+                  >
+                    <circle cx="10" cy="10" r="6" />
+                  </svg>
+                </div>
+                <label
+                  for="privacy-public"
+                  class="text-sm text-gray-700 cursor-pointer select-none"
+                  >عمومی - همه می‌توانند مشاهده کنند</label
+                >
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="radio"
+                  id="privacy-unlisted"
+                  name="privacy"
+                  value="unlisted"
+                  class="opacity-0 absolute h-5 w-5 cursor-pointer"
+                />
+                <div
+                  class="bg-white border-2 rounded-full border-gray-300 w-5 h-5 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-primary"
+                >
+                  <svg
+                    class="fill-current hidden w-3 h-3 text-primary pointer-events-none"
+                    viewBox="0 0 20 20"
+                  >
+                    <circle cx="10" cy="10" r="6" />
+                  </svg>
+                </div>
+                <label
+                  for="privacy-unlisted"
+                  class="text-sm text-gray-700 cursor-pointer select-none"
+                  >غیرفهرست - فقط با لینک قابل دسترسی است</label
+                >
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="radio"
+                  id="privacy-private"
+                  name="privacy"
+                  value="private"
+                  class="opacity-0 absolute h-5 w-5 cursor-pointer"
+                />
+                <div
+                  class="bg-white border-2 rounded-full border-gray-300 w-5 h-5 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-primary"
+                >
+                  <svg
+                    class="fill-current hidden w-3 h-3 text-primary pointer-events-none"
+                    viewBox="0 0 20 20"
+                  >
+                    <circle cx="10" cy="10" r="6" />
+                  </svg>
+                </div>
+                <label
+                  for="privacy-private"
+                  class="text-sm text-gray-700 cursor-pointer select-none"
+                  >خصوصی - فقط شما می‌توانید مشاهده کنید</label
+                >
+              </div>
+            </div>
+          </div>
+          <div>
+            <label
+              for="file-type"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >نوع فایل <span class="text-red-500">*</span></label
+            >
+            <div class="relative">
+              <select
+                id="file-type"
+                name="file_type"
+                class="w-full px-4 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-10"
+              >
+                <option value="" disabled selected>انتخاب کنید</option>
+                <option value="image">تصویر</option>
+                <option value="document">سند</option>
+                <option value="video">ویدیو</option>
+                <option value="audio">صوت</option>
+                <option value="other">سایر</option>
+              </select>
+              <div
+                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+              >
+                <i class="ri-arrow-down-s-line"></i>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label
+              for="category"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >دسته‌بندی</label
+            >
+            <div class="relative">
+              <select
+                id="category"
+                name="category"
+                class="w-full px-4 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-10"
+              >
+                <option value="" disabled selected>انتخاب کنید</option>
+                <option value="personal">شخصی</option>
+                <option value="work">کاری</option>
+                <option value="education">آموزشی</option>
+                <option value="entertainment">سرگرمی</option>
+                <option value="other">سایر</option>
+              </select>
+              <div
+                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+              >
+                <i class="ri-arrow-down-s-line"></i>
+              </div>
+            </div>
+          </div>
+          <div class="md:col-span-2">
+            <label
+              for="description"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >توضیحات</label
+            >
+            <textarea
+              id="description"
+              name="description"
+              rows="4"
+              class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="توضیحات خود را وارد کنید"
+            ></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-3"
+              >تصویر شاخص</label
+            >
+            <div class="flex items-start space-x-reverse space-x-4">
+              <div
+                id="thumbnail-preview"
+                class="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden"
+              >
+                <div class="text-center" id="thumbnail-placeholder">
+                  <div
+                    class="w-10 h-10 mx-auto mb-2 flex items-center justify-center text-gray-400"
+                  >
+                    <i class="ri-image-line ri-2x"></i>
+                  </div>
+                  <span class="text-sm text-gray-500">پیش‌نمایش</span>
+                </div>
+                <img
+                  id="thumbnail-image"
+                  class="hidden w-full h-full object-cover"
+                  alt="تصویر شاخص"
+                />
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center space-x-reverse space-x-3">
+                  <button
+                    type="button"
+                    id="thumbnail-upload"
+                    class="px-4 py-2 bg-white border border-gray-300 rounded-button text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent whitespace-nowrap"
+                  >
+                    <i class="ri-upload-line ml-1"></i>
+                    انتخاب تصویر
+                  </button>
+                  <button
+                    type="button"
+                    id="thumbnail-remove"
+                    class="hidden px-4 py-2 bg-white border border-gray-300 rounded-button text-sm text-red-600 hover:bg-red-50 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-transparent whitespace-nowrap"
+                  >
+                    <i class="ri-delete-bin-line ml-1"></i>
+                    حذف تصویر
+                  </button>
+                </div>
+                <input
+                  type="file"
+                  id="thumbnail-input"
+                  name="thumbnail"
+                  class="hidden"
+                  accept="image/*"
+                />
+                <p class="mt-2 text-sm text-gray-500">
+                  فرمت‌های مجاز: JPG، PNG - حداکثر حجم: ۲ مگابایت
+                </p>
+                <p class="mt-1 text-sm text-gray-500">
+                  ابعاد پیشنهادی: ۵۰۰×۵۰۰ پیکسل
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-3"
+              >تأیید محتوای آموزشی</label
+            >
+            <div class="space-y-2">
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="content-educational"
+                  class="opacity-0 absolute h-5 w-5 cursor-pointer"
+                />
+                <div
+                  class="bg-white border-2 rounded border-gray-300 w-5 h-5 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-primary"
+                >
+                  <svg
+                    class="fill-current hidden w-3 h-3 text-primary pointer-events-none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                  </svg>
+                </div>
+                <label
+                  for="content-educational"
+                  class="text-sm text-gray-700 cursor-pointer select-none"
+                  >محتوای من آموزشی است و برای دانشجویان مفید خواهد بود</label
+                >
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="content-copyright"
+                  class="opacity-0 absolute h-5 w-5 cursor-pointer"
+                />
+                <div
+                  class="bg-white border-2 rounded border-gray-300 w-5 h-5 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-primary"
+                >
+                  <svg
+                    class="fill-current hidden w-3 h-3 text-primary pointer-events-none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                  </svg>
+                </div>
+                <label
+                  for="content-copyright"
+                  class="text-sm text-gray-700 cursor-pointer select-none"
+                  >محتوای من نقض کپی‌رایت نمی‌کند و از منابع مجاز استفاده شده
+                  است</label
+                >
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="content-appropriate"
+                  class="opacity-0 absolute h-5 w-5 cursor-pointer"
+                />
+                <div
+                  class="bg-white border-2 rounded border-gray-300 w-5 h-5 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-primary"
+                >
+                  <svg
+                    class="fill-current hidden w-3 h-3 text-primary pointer-events-none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                  </svg>
+                </div>
+                <label
+                  for="content-appropriate"
+                  class="text-sm text-gray-700 cursor-pointer select-none"
+                  >محتوای من شامل مطالب نامناسب، توهین‌آمیز یا مضر نیست</label
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="preview-container" class="mb-8">
+          <h3 class="text-lg font-medium text-gray-800 mb-4">
+            پیش‌نمایش فایل‌ها
+          </h3>
+          <div
+            id="file-previews"
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
+            <div class="text-center text-gray-500 col-span-full py-8">
+              هنوز فایلی انتخاب نشده است
+            </div>
+          </div>
+        </div>
+        <div id="upload-progress" class="hidden mb-8">
+          <h3 class="text-lg font-medium text-gray-800 mb-4">وضعیت آپلود</h3>
+          <div class="bg-gray-200 rounded-full h-4 mb-2">
+            <div
+              id="progress-bar"
+              class="bg-[#2563eb] h-4 rounded-full progress-bar"
+              style="width: 0%"
+            ></div>
+          </div>
+          <div class="flex justify-between text-sm text-gray-600">
+            <span id="upload-status">در انتظار شروع آپلود...</span>
+            <span id="upload-percentage">۰٪</span>
+          </div>
+        </div>
+        <div id="message-container" class="mb-8 hidden">
+          <div
+            id="success-message"
+            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative hidden"
+          >
+            <span class="block sm:inline">فایل‌ها با موفقیت آپلود شدند.</span>
+          </div>
+          <div
+            id="error-message"
+            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative hidden"
+          >
+            <span class="block sm:inline"
+              >خطا در آپلود فایل‌ها. لطفاً دوباره تلاش کنید.</span
+            >
+          </div>
+        </div>
+        <div class="flex justify-end gap-4">
+          <button
+            id="cancel-button"
+            class="px-6 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 whitespace-nowrap"
+          >
+            انصراف
+          </button>
+          <button
+            id="upload-button"
+            class="px-6 py-2 bg-[#2563eb] text-white rounded-button hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 whitespace-nowrap"
+          >
+            آپلود فایل‌ها
+          </button>
+        </div>
+      </div>
+  </form>
+  {% endblock content %}
+    {% block script %}
+    <script id="dropzone-handler">
+      document.addEventListener("DOMContentLoaded", function () {
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("file-input");
+        const filePreviews = document.getElementById("file-previews");
+        const previewContainer = document.getElementById("preview-container");
+        let files = [];
+        // Initialize radio buttons
+        document
+          .querySelectorAll('input[type="radio"][name="privacy"]')
+          .forEach((radio) => {
+            radio.addEventListener("change", function () {
+              const radioDiv = this.nextElementSibling;
+              document.querySelectorAll('input[name="privacy"]').forEach((r) => {
+                r.nextElementSibling.querySelector("svg").classList.add("hidden");
+              });
+              if (this.checked) {
+                radioDiv.querySelector("svg").classList.remove("hidden");
+              }
+            });
+          });
+        // Initialize checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+          checkbox.addEventListener("change", function () {
+            const checkDiv = this.nextElementSibling;
+            if (this.checked) {
+              checkDiv.querySelector("svg").classList.remove("hidden");
+            } else {
+              checkDiv.querySelector("svg").classList.add("hidden");
+            }
+          });
+        });
+        // Handle click on dropzone
+        dropzone.addEventListener("click", function () {
+          fileInput.click();
+        });
+        // Handle drag events
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+          dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+        function preventDefaults(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        ["dragenter", "dragover"].forEach((eventName) => {
+          dropzone.addEventListener(
+            eventName,
+            function () {
+              dropzone.classList.add("dropzone-active");
+            },
+            false,
+          );
+        });
+        ["dragleave", "drop"].forEach((eventName) => {
+          dropzone.addEventListener(
+            eventName,
+            function () {
+              dropzone.classList.remove("dropzone-active");
+            },
+            false,
+          );
+        });
+        // Handle file drop
+        dropzone.addEventListener("drop", function (e) {
+          const droppedFiles = e.dataTransfer.files;
+          handleFiles(droppedFiles);
+        });
+        // Handle file selection via input
+        fileInput.addEventListener("change", function () {
+          handleFiles(this.files);
+        });
+        function handleFiles(newFiles) {
+          if (newFiles.length === 0) return;
+          // Add new files to the array
+          Array.from(newFiles).forEach((file) => {
+            // Check if file already exists in the array
+            const fileExists = files.some(
+              (f) => f.name === file.name && f.size === file.size,
+            );
+            if (!fileExists) {
+              files.push(file);
+            }
+          });
+          updateFilePreviews();
+        }
+        // Handle thumbnail upload
+        const thumbnailUpload = document.getElementById("thumbnail-upload");
+        const thumbnailInput = document.getElementById("thumbnail-input");
+        const thumbnailPreview = document.getElementById("thumbnail-preview");
+        const thumbnailImage = document.getElementById("thumbnail-image");
+        const thumbnailPlaceholder = document.getElementById("thumbnail-placeholder");
+        const thumbnailRemove = document.getElementById("thumbnail-remove");
+        thumbnailUpload.addEventListener("click", () => {
+          thumbnailInput.click();
+        });
+        thumbnailInput.addEventListener("change", function (e) {
+          const file = this.files[0];
+          if (!file) return;
+          // Validate file type
+          if (!file.type.startsWith("image/")) {
+            showError("لطفاً یک فایل تصویری انتخاب کنید");
+            return;
+          }
+          // Validate file size (2MB)
+          if (file.size > 2 * 1024 * 1024) {
+            showError("حجم تصویر نباید بیشتر از ۲ مگابایت باشد");
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            thumbnailImage.src = e.target.result;
+            thumbnailImage.classList.remove("hidden");
+            thumbnailPlaceholder.classList.add("hidden");
+            thumbnailRemove.classList.remove("hidden");
+          };
+          reader.readAsDataURL(file);
+        });
+        thumbnailRemove.addEventListener("click", function () {
+          thumbnailInput.value = "";
+          thumbnailImage.src = "";
+          thumbnailImage.classList.add("hidden");
+          thumbnailPlaceholder.classList.remove("hidden");
+          thumbnailRemove.classList.add("hidden");
+        });
+        function updateFilePreviews() {
+          filePreviews.innerHTML = "";
+          if (files.length === 0) {
+            filePreviews.innerHTML =
+              '<div class="text-center text-gray-500 col-span-full py-8">هنوز فایلی انتخاب نشده است</div>';
+            return;
+          }
+          files.forEach((file, index) => {
+            const filePreview = document.createElement("div");
+            filePreview.className =
+              "border border-gray-200 rounded-lg p-4 bg-white shadow-sm";
+            const isImage = file.type.startsWith("image/");
+            let previewContent = "";
+            if (isImage) {
+              const imageUrl = URL.createObjectURL(file);
+              previewContent = `
+      <div class="w-full h-32 mb-3 flex items-center justify-center overflow-hidden bg-gray-100 rounded">
+      <img src="${imageUrl}" alt="${file.name}" class="object-cover h-full w-full">
+      </div>
+      `;
+            } else {
+              let fileIcon = "ri-file-line";
+              if (file.type.includes("pdf")) fileIcon = "ri-file-pdf-line";
+              else if (
+                file.type.includes("word") ||
+                file.name.endsWith(".doc") ||
+                file.name.endsWith(".docx")
+              )
+                fileIcon = "ri-file-word-line";
+              else if (
+                file.type.includes("excel") ||
+                file.name.endsWith(".xls") ||
+                file.name.endsWith(".xlsx")
+              )
+                fileIcon = "ri-file-excel-line";
+              else if (file.type.includes("video")) fileIcon = "ri-video-line";
+              else if (file.type.includes("audio")) fileIcon = "ri-music-line";
+              previewContent = `
+      <div class="w-full h-32 mb-3 flex items-center justify-center bg-gray-100 rounded">
+      <div class="w-16 h-16 flex items-center justify-center text-gray-500">
+      <i class="${fileIcon} ri-3x"></i>
+      </div>
+      </div>
+      `;
+            }
+            const fileSize = formatFileSize(file.size);
+            filePreview.innerHTML = `
+      ${previewContent}
+      <div class="flex justify-between items-start">
+      <div class="overflow-hidden">
+      <p class="text-sm font-medium text-gray-800 truncate" title="${file.name}">${file.name}</p>
+      <p class="text-xs text-gray-500">${fileSize}</p>
+      </div>
+      <button class="remove-file text-gray-400 hover:text-red-500 transition-colors" data-index="${index}">
+      <i class="ri-close-line ri-lg"></i>
+      </button>
+      </div>
+      `;
+            filePreviews.appendChild(filePreview);
+          });
+          // Add event listeners to remove buttons
+          document.querySelectorAll(".remove-file").forEach((button) => {
+            button.addEventListener("click", function () {
+              const index = parseInt(this.getAttribute("data-index"));
+              removeFile(index);
+            });
+          });
+        }
+        function removeFile(index) {
+          files.splice(index, 1);
+          updateFilePreviews();
+        }
+        function formatFileSize(bytes) {
+          if (bytes === 0) return "۰ بایت";
+          const k = 1024;
+          const sizes = ["بایت", "کیلوبایت", "مگابایت", "گیگابایت"];
+          const i = Math.floor(Math.log(bytes) / Math.log(k));
+          const size = parseFloat((bytes / Math.pow(k, i)).toFixed(2));
+          const persianSize = toPersianNumbers(size.toString());
+          return persianSize + " " + sizes[i];
+        }
+        function toPersianNumbers(str) {
+          const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+          return str.replace(/[0-9]/g, function (w) {
+            return persianNumbers[+w];
+          });
+        }
+      });
+    </script>
+    <script id="upload-handler">
+      document.addEventListener("DOMContentLoaded", function () {
+        const uploadButton = document.getElementById("upload-button");
+        const cancelButton = document.getElementById("cancel-button");
+        const progressBar = document.getElementById("progress-bar");
+        const uploadStatus = document.getElementById("upload-status");
+        const uploadPercentage = document.getElementById("upload-percentage");
+        const uploadProgress = document.getElementById("upload-progress");
+        const successMessage = document.getElementById("success-message");
+        const errorMessage = document.getElementById("error-message");
+        const messageContainer = document.getElementById("message-container");
+        const titleInput = document.getElementById("title");
+        const fileTypeSelect = document.getElementById("file-type");
+        let isUploading = false;
+        uploadButton.addEventListener("click", function () {
+          if (isUploading) return;
+          // Validate form
+          if (!validateForm()) return;
+          // Simulate upload
+          startUpload();
+        });
+        cancelButton.addEventListener("click", function () {
+          if (isUploading) {
+            cancelUpload();
+          } else {
+            // Reset form
+            resetForm();
+          }
+        });
+        function validateForm() {
+          // Reset error messages
+          messageContainer.classList.add("hidden");
+          successMessage.classList.add("hidden");
+          errorMessage.classList.add("hidden");
+          // Check title
+          if (!titleInput.value.trim()) {
+            showError("لطفاً عنوان را وارد کنید");
+            titleInput.focus();
+            return false;
+          }
+          // Check privacy setting
+          const privacySelected = document.querySelector(
+            'input[name="privacy"]:checked',
+          );
+          if (!privacySelected) {
+            showError("لطفاً تنظیمات حریم خصوصی را انتخاب کنید");
+            return false;
+          }
+          // Check content verification checkboxes
+          const contentEducational = document.getElementById("content-educational");
+          const contentCopyright = document.getElementById("content-copyright");
+          const contentAppropriate = document.getElementById("content-appropriate");
+          if (
+            !contentEducational.checked ||
+            !contentCopyright.checked ||
+            !contentAppropriate.checked
+          ) {
+            showError("لطفاً تمام موارد تأیید محتوا را بررسی و تأیید کنید");
+            return false;
+          }
+          // Check file type
+          if (!fileTypeSelect.value) {
+            showError("لطفاً نوع فایل را انتخاب کنید");
+            fileTypeSelect.focus();
+            return false;
+          }
+          // Check if files are selected
+          const fileInput = document.getElementById("file-input");
+          if (fileInput.files.length === 0) {
+            showError("لطفاً حداقل یک فایل انتخاب کنید");
+            return false;
+          }
+          return true;
+        }
+        function startUpload() {
+          isUploading = true;
+          uploadProgress.classList.remove("hidden");
+          uploadButton.disabled = true;
+          uploadButton.classList.add("opacity-50", "cursor-not-allowed");
+          uploadButton.textContent = "در حال آپلود...";
+          cancelButton.textContent = "لغو آپلود";
+          let progress = 0;
+          const totalFiles = document.getElementById("file-input").files.length;
+          // Simulate progress
+          const interval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress >= 100) {
+              progress = 100;
+              clearInterval(interval);
+              completeUpload();
+            }
+            updateProgress(progress, totalFiles);
+          }, 500);
+          // Store interval ID for potential cancellation
+          window.uploadInterval = interval;
+        }
+        function updateProgress(progress, totalFiles) {
+          const percentage = Math.min(Math.round(progress), 100);
+          progressBar.style.width = `${percentage}%`;
+          uploadPercentage.textContent = `${toPersianNumbers(percentage.toString())}٪`;
+          if (percentage < 100) {
+            uploadStatus.textContent = `در حال آپلود ${toPersianNumbers(totalFiles.toString())} فایل...`;
+          } else {
+            uploadStatus.textContent = "آپلود کامل شد";
+          }
+        }
+        function completeUpload() {
+          isUploading = false;
+          uploadButton.disabled = false;
+          uploadButton.classList.remove("opacity-50", "cursor-not-allowed");
+          uploadButton.textContent = "آپلود فایل‌ها";
+          cancelButton.textContent = "انصراف";
+          // Show success message
+          messageContainer.classList.remove("hidden");
+          successMessage.classList.remove("hidden");
+          // Reset form after delay
+          setTimeout(() => {
+            resetForm();
+          }, 3000);
+        }
+        function cancelUpload() {
+          if (window.uploadInterval) {
+            clearInterval(window.uploadInterval);
+          }
+          isUploading = false;
+          uploadProgress.classList.add("hidden");
+          uploadButton.disabled = false;
+          uploadButton.classList.remove("opacity-50", "cursor-not-allowed");
+          uploadButton.textContent = "آپلود فایل‌ها";
+          cancelButton.textContent = "انصراف";
+          // Reset progress
+          progressBar.style.width = "0%";
+          uploadPercentage.textContent = "۰٪";
+          uploadStatus.textContent = "در انتظار شروع آپلود...";
+        }
+        function resetForm() {
+          document.getElementById("file-input").value = "";
+          titleInput.value = "";
+          document.getElementById("description").value = "";
+          fileTypeSelect.value = "";
+          document.getElementById("category").value = "";
+          // Reset file previews
+          const filePreviews = document.getElementById("file-previews");
+          filePreviews.innerHTML =
+            '<div class="text-center text-gray-500 col-span-full py-8">هنوز فایلی انتخاب نشده است</div>';
+          // Reset thumbnail
+          thumbnailInput.value = "";
+          thumbnailImage.src = "";
+          thumbnailImage.classList.add("hidden");
+          thumbnailPlaceholder.classList.remove("hidden");
+          thumbnailRemove.classList.add("hidden");
+          // Hide progress and messages
+          uploadProgress.classList.add("hidden");
+          messageContainer.classList.add("hidden");
+        }
+        function showError(message) {
+          messageContainer.classList.remove("hidden");
+          errorMessage.classList.remove("hidden");
+          errorMessage.querySelector("span").textContent = message;
+        }
+        function toPersianNumbers(str) {
+          const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+          return str.replace(/[0-9]/g, function (w) {
+            return persianNumbers[+w];
+          });
+        }
+      });
+    </script>
+    {% endblock script %}

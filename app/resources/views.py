@@ -2,11 +2,15 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .models import Resource, Comment
-from .forms import ResourceForm, CommentForm
+from django.contrib import messages
+from .models import Resource, UserProfile
+from .forms import ResourceForm, CommentForm, SkillForm, AchievementForm, CertificateForm
+from django.views.generic.detail import DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.http import Http404, HttpResponseForbidden
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Q
 
 
 def home(request):
@@ -14,9 +18,18 @@ def home(request):
 
 
 def resource_list(request):
+    query = request.GET.get('q')
+    if query:
+        resources = Resource.objects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    else:
+        resources = Resource.objects.filter(is_approved=True)
+        
     resources = Resource.objects.filter(is_approved=True).order_by("-uploaded_at")
-    return render(request, "resources/resource_list.html", {"resources": resources})
-
+    return render(request, "resources_list.html", {"resources": resources})
 
 def signup(request):
     if request.method == "POST":
@@ -33,41 +46,49 @@ def signup(request):
 # resource upload
 @login_required
 def upload_resource(request):
-    if request.method == "POST":
-        form = ResourceForm(request.POST, request.FILES)
-        if form.is_valid():
-            resource = form.save(commit=False)
-            resource.uploader = request.user 
-            resource.save()
-            return redirect("home")
-    else:
-        form = ResourceForm()
-    return render(request, "resources/upload_resource.html", {"form": form})
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        tags = request.POST.get('tags')
+        instructor = request.POST.get('instructor')
+        external_url = request.POST.get('external_url')
+        privacy = request.POST.get('privacy', 'public')
+        file_type = request.POST.get('file_type')
+        category = request.POST.get('category')
+        description = request.POST.get('description')
 
+        content_educational = True if request.POST.get('content-educational') == 'on' else False
+        content_copyright = True if request.POST.get('content-copyright') == 'on' else False
+        content_appropriate = True if request.POST.get('content-appropriate') == 'on' else False
 
+        uploaded_file = request.FILES.get('files')
+        thumbnail = request.FILES.get('thumbnail')
 
-def resource_detail(request, pk):
-    resource = get_object_or_404(Resource, pk=pk)
-    comments = resource.comments.all()
-    related_resources = Resource.objects.filter(category=resource.category).exclude(pk=pk)[:4]
+        # اعتبارسنجی ساده
+        if not title or not uploaded_file or not file_type:
+            messages.error(request, "لطفاً فیلدهای ضروری را پر کنید")
+            return render(request, 'upload_template.html')
 
-    if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.resource = resource
-            comment.user = request.user
-            comment.save()
-            return redirect('resource_detail', pk=pk)
-    else:
-        form = CommentForm()
+        new_upload = Resource.objects.create(
+            title=title,
+            tags=tags,
+            instructor=instructor,
+            external_url=external_url,
+            privacy=privacy,
+            file_type=file_type,
+            category=category,
+            description=description,
+            file=uploaded_file,
+            thumbnail=thumbnail,
+            content_educational=content_educational,
+            content_copyright=content_copyright,
+            content_appropriate=content_appropriate,
+        )
 
-    return render(request, 'resources/resource_detail.html', {
-        'resource': resource,
-        'comments': comments,
-        'comment_form': form,
-        'related_resources': related_resources,
-    })
+        messages.success(request, "فایل با موفقیت آپلود شد")
+        return redirect('upload')  # یا هر URL دیگری که مناسب است
+
+    return render(request, 'upload.html')
+
 
 
 
@@ -94,7 +115,7 @@ def resource_detail(request, pk):
     else:
         form = CommentForm()
 
-    return render(request, 'resources/resource_detail.html', {
+    return render(request, 'detail.html', {
         'resource': resource,
         'comments': comments,
         'comment_form': form,
@@ -133,7 +154,7 @@ def delete_resource(request, pk):
 @staff_member_required
 def pending_resources(request):
     resources = Resource.objects.filter(is_approved=False)
-    return render(request, 'resources/pending_list.html', {'resources': resources})
+    return render(request, 'pending.html', {'resources': resources})
 
 @staff_member_required
 def approve_resource(request, pk):
@@ -152,13 +173,26 @@ def toggle_like(request, pk):
         resource.likes.add(request.user)
     return redirect('resource_detail', pk=pk)
 
-@login_required
-def profile_view(request):
-    user = request.user
-    context = {
-        'my_resources': Resource.objects.filter(uploader=user),
-        'likes_count': user.liked_resources.count() if hasattr(user, 'liked_resources') else 0,
-        'comments_count': Comment.objects.filter(user=user).count(),
-        'pending_count': Resource.objects.filter(uploader=user, is_approved=False).count()
-    }
-    return render(request, 'resources/profile.html', context)
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    model = UserProfile
+    template_name = 'profile.html'
+    context_object_name = 'profile_view'
+
+    def get_object(self, queryset=None):
+        # نمایش پروفایل کاربر فعلی
+        return UserProfile.objects.get_or_create(user=self.request.user)
+
+
+
+def add_skill(request):
+    profile = request.user.userprofile
+    if request.method == 'POST':
+        form = SkillForm(request.POST)
+        if form.is_valid():
+            skill = form.save(commit=False)
+            skill.user = profile
+            skill.save()
+            return redirect('profile_view')
+    else:
+        form = SkillForm()
+    return render(request, 'add_skill.html', {'form': form})
