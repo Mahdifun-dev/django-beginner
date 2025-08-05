@@ -9,7 +9,7 @@
       tailwind.config = {
         theme: {
           extend: {
-            colors: { primary: "#2563eb", secondary: "#60a5fa" },
+            colors: { primary: "#1e88e5", secondary: "#60a5fa" },
             borderRadius: {
               none: "0px",
               sm: "4px",
@@ -203,17 +203,17 @@
                 type="search"
                 name="q"  
                 placeholder="جستجو..."
-                class="w-full bg-gray-50 border border-gray-200 text-gray-900 py-2 px-4 pr-10 rounded-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                class="w-full bg-gray-50 border border-gray-200 text-gray-900 py-2 px-4 pr-10 rounded-full focus:outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-primary"
                 value="{{ request.GET.q }}"
               />
               <div class="absolute left-3 top-1/2 transform -translate-y-1/2 flex gap-2">
                 <button type="submit"
-                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#2563eb]"
                 >
                   <i class="ri-search-line ri-lg"></i>
                 </button>
                 <button type="button"
-                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#2563eb]"
                 >
                   <i class="ri-mic-line ri-lg"></i>
                 </button>
@@ -289,8 +289,8 @@
             <ul class="space-y-1">
               <li>
                 <a
-                  href="#"
-                  class="sidebar-item active flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+                  href="{% url 'home' %}"
+                  class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
                 >
                   <div class="w-5 h-6 flex items-center justify-center ml-2">
                     <i class="ri-home-line"></i>
@@ -299,15 +299,15 @@
                 </a>
               </li>
               <li>
-            <a
-              href="#"
-              class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
-            >
-              <div class="w-5 h-6 flex items-center justify-center ml-2">
-                <i class="ri-fire-line"></i>
-              </div>
-              <span class="sidebar-label">محبوب‌ترین‌ها</span>
-            </a>
+                <a
+                  href="{% url 'resources_list' %}"
+                  class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+                >
+                  <div class="w-5 h-6 flex items-center justify-center ml-2">
+                    <i class="ri-fire-line"></i>
+                  </div>
+                  <span class="sidebar-label">محبوب‌ترین‌ها</span>
+                </a>
               </li>
               <li>
             <a
@@ -404,7 +404,7 @@
                   </li>
                   <li>
             <a
-              href="#"
+              href="{% url 'upload_resource' %}"
               class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
             >
               <div class="w-5 h-6 flex items-center justify-center ml-2">
@@ -420,7 +420,7 @@
           <div class="space-y-1">
                   <li>
             <a
-              href="#"
+              href="{% url 'profile_view' %}"
               class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
             >
               <div class="w-5 h-6 flex items-center justify-center ml-2">
@@ -469,7 +469,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <a href="#" class="flex items-center mb-4">
-              <span class="text-2xl font-['Pacifico'] text-primary">logo</span>
+              <span class="text-2xl font-['Pacifico'] text-[#1e88e5]">logo</span>
             </a>
             <p class="text-gray-600 text-sm">
               پلتفرم آموزشی برای دانشجویان ایرانی با هدف اشتراک‌گذاری و دسترسی
@@ -480,27 +480,27 @@
             <h3 class="text-gray-800 font-bold mb-4">دسترسی سریع</h3>
             <ul class="space-y-2 text-gray-600">
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'home' %}" class="hover:text-[#1e88e5] transition-colors"
                   >صفحه اصلی</a
                 >
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'resources_list' %}" class="hover:text-[#1e88e5] transition-colors"
                   >دوره‌های آموزشی</a
                 >
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'upload_resource' %}" class="hover:text-[#1e88e5] transition-colors"
                   >آپلود محتوا</a
                 >
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'about' %}" class="hover:text-[#1e88e5] transition-colors"
                   >درباره ما</a
                 >
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'contact' %}" class="hover:text-[#1e88e5] transition-colors"
                   >تماس با ما</a
                 >
               </li>
@@ -510,27 +510,27 @@
             <h3 class="text-gray-800 font-bold mb-4">قوانین و مقررات</h3>
             <ul class="space-y-2 text-gray-600">
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'terms' %}" class="hover:text-[#1e88e5] transition-colors"
                   >شرایط استفاده</a
                 >
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'privacy' %}" class="hover:text-[#1e88e5] transition-colors"
                   >حریم خصوصی</a
                 >
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'upload_resource' %}" class="hover:text-[#1e88e5] transition-colors"
                   >قوانین آپلود محتوا</a
                 >
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'copyright' %}" class="hover:text-[#1e88e5] transition-colors"
                   >حقوق مؤلفین</a
                 >
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors"
+                <a href="{% url 'report' %}" class="hover:text-[#1e88e5] transition-colors"
                   >گزارش تخلف</a
                 >
               </li>
@@ -545,10 +545,10 @@
               <input
                 type="email"
                 placeholder="ایمیل خود را وارد کنید"
-                class="bg-[#272727] border-none text-white py-2 px-4 rounded-r-md focus:outline-none flex-grow"
+                class="bg-gray-300 border-none text-gray-600 py-2 px-4 rounded-r-md focus:outline-none flex-grow"
               />
               <button
-                class="bg-primary text-white py-2 px-4 rounded-l-md hover:bg-red-700 transition-colors whitespace-nowrap !rounded-button"
+                class="bg-[#1e88e5] text-white py-2 px-4 rounded-l-md hover:bg-red-700 transition-colors whitespace-nowrap !rounded-button"
               >
                 عضویت
               </button>
@@ -621,18 +621,23 @@
         });
       });
     </script>
-    <script id="sidebarNavigation">
+    <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const sidebarItems = document.querySelectorAll(".sidebar-item");
-        sidebarItems.forEach((item) => {
-          item.addEventListener("click", function (e) {
-            e.preventDefault();
-            sidebarItems.forEach((i) => i.classList.remove("active"));
-            this.classList.add("active");
-          });
-        });
-      });
-    </script>
+  const currentPath = window.location.pathname;
+  const sidebarItems = document.querySelectorAll(".sidebar-item");
+
+  sidebarItems.forEach((item) => {
+    const itemHref = item.getAttribute("href");
+
+    // بررسی دقیق‌تر: اگر آدرس دقیقاً برابر باشه
+    if (itemHref === currentPath) {
+      item.classList.add("active");
+    } else {
+      item.classList.remove("active");
+    }
+  });
+});
+    </script>    
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const sidebar = document.getElementById("sidebar");

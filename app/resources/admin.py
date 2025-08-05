@@ -1,9 +1,15 @@
 from django.contrib import admin
-from .models import Category, Resource, Comment
+from .models import Category, Resource, Comment, UserProfile, Skill, Achievement, Certificate, Tag, ResourceFile
 
 # Register your models here.
 admin.site.register(Category)
 admin.site.register(Comment)
+admin.site.register(UserProfile)
+admin.site.register(Skill)
+admin.site.register(Achievement)
+admin.site.register(Certificate)
+admin.site.register(Tag)
+admin.site.register(ResourceFile)
 
 @admin.register(Resource)
 class ResourceAdmin(admin.ModelAdmin):
@@ -25,4 +31,3 @@ class ResourceAdmin(admin.ModelAdmin):
 #     uploader = models.ForeignKey(User, on_delete=models.CASCADE)
 #     uploaded_at = models.DateTimeField(auto_now_add=True)
 #     is_approved = models.BooleanField(default=False)
-    

@@ -3,14 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
-from .models import Resource, UserProfile
-from .forms import ResourceForm, CommentForm, SkillForm, AchievementForm, CertificateForm
-from django.views.generic.detail import DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Resource, UserProfile, Skill, Achievement, Certificate, User
+from .forms import ResourceForm, CommentForm, SkillForm, AchievementForm, CertificateForm, ProfileForm
 from django.shortcuts import get_object_or_404, redirect
 from django.http import Http404, HttpResponseForbidden
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
+from .models import Tag
+from .models import ResourceFile
 
 
 def home(request):
@@ -47,48 +47,46 @@ def signup(request):
 @login_required
 def upload_resource(request):
     if request.method == 'POST':
-        title = request.POST.get('title')
-        tags = request.POST.get('tags')
-        instructor = request.POST.get('instructor')
-        external_url = request.POST.get('external_url')
-        privacy = request.POST.get('privacy', 'public')
-        file_type = request.POST.get('file_type')
-        category = request.POST.get('category')
-        description = request.POST.get('description')
+        print('here is post')
+        form = ResourceForm(request.POST, request.FILES)
+        if form.is_valid():
+            resource = form.save(commit=False)
+            resource.uploader = request.user
+            resource.save()
+            form.save_m2m()
 
-        content_educational = True if request.POST.get('content-educational') == 'on' else False
-        content_copyright = True if request.POST.get('content-copyright') == 'on' else False
-        content_appropriate = True if request.POST.get('content-appropriate') == 'on' else False
+            # دریافت همه فایل‌ها
+            print('here is files')
+            files = request.FILES.getlist('files')
+            for f in files:
+                ResourceFile.objects.create(resource=resource, file=f)
+            # اگر می‌خواهید اولین فایل را در فیلد file اصلی هم ذخیره کنید:
+            if files:
+                resource.file = files[0]
+                resource.save(update_fields=['file'])
 
-        uploaded_file = request.FILES.get('files')
-        thumbnail = request.FILES.get('thumbnail')
+            # بقیه کدهای مربوط به تگ و مدرس و پیام موفقیت
+            print('here is form')
+            tags_input = request.POST.get('tags', '').strip()
+            print('tags_input:', tags_input)
+            if tags_input:
+                tag_names = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
+                for tag_name in tag_names:
+                    tag, created = Tag.objects.get_or_create(name=tag_name)
+                    print('adding tag:', tag_name)
+                    resource.tags.add(tag)
+            instructor_name = request.POST.get('instructor_name', '').strip()
+            if instructor_name:
+                resource.instructor_name = instructor_name
+                resource.save(update_fields=['instructor_name'])
 
-        # اعتبارسنجی ساده
-        if not title or not uploaded_file or not file_type:
-            messages.error(request, "لطفاً فیلدهای ضروری را پر کنید")
-            return render(request, 'upload_template.html')
-
-        new_upload = Resource.objects.create(
-            title=title,
-            tags=tags,
-            instructor=instructor,
-            external_url=external_url,
-            privacy=privacy,
-            file_type=file_type,
-            category=category,
-            description=description,
-            file=uploaded_file,
-            thumbnail=thumbnail,
-            content_educational=content_educational,
-            content_copyright=content_copyright,
-            content_appropriate=content_appropriate,
-        )
-
-        messages.success(request, "فایل با موفقیت آپلود شد")
-        return redirect('upload')  # یا هر URL دیگری که مناسب است
-
-    return render(request, 'upload.html')
-
+            messages.success(request, 'فایل‌ها با موفقیت آپلود شدند و در انتظار تایید هستند.')
+            return redirect('upload_resource')
+        else:
+            messages.error(request, 'خطا در فرم. لطفاً اطلاعات را بررسی کنید.')
+    else:
+        form = ResourceForm()
+    return render(request, 'upload.html', {'form': form})
 
 
 
@@ -173,17 +171,37 @@ def toggle_like(request, pk):
         resource.likes.add(request.user)
     return redirect('resource_detail', pk=pk)
 
-class ProfileDetailView(LoginRequiredMixin, DetailView):
-    model = UserProfile
-    template_name = 'profile.html'
-    context_object_name = 'profile_view'
+@login_required
+def ProfileDetailView(request):
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
-    def get_object(self, queryset=None):
-        # نمایش پروفایل کاربر فعلی
-        return UserProfile.objects.get_or_create(user=self.request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_view')  # یا هر صفحه‌ای که می‌خواهی
+    else:
+        form = ProfileForm(instance=request.user.userprofile, user=request.user)
+
+    return render(request, 'profile.html', {'form': form, 'profile': profile})
 
 
+@login_required
+def ProfileView(request, username):
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(UserProfile, user=user)
 
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_view')  # یا هر صفحه‌ای که می‌خواهی
+    else:
+        form = ProfileForm(instance=request.user.userprofile, user=request.user)
+
+    return render(request, 'profile.html', {'form': form, 'profile': profile, 'user': user})
+
+@login_required
 def add_skill(request):
     profile = request.user.userprofile
     if request.method == 'POST':
@@ -196,3 +214,68 @@ def add_skill(request):
     else:
         form = SkillForm()
     return render(request, 'add_skill.html', {'form': form})
+
+
+@login_required
+def delete_skill(request, skill_id):
+    skill = get_object_or_404(Skill, id=skill_id, user=request.user.userprofile)
+    skill.delete()
+    return redirect('profile_view') 
+
+@login_required
+def add_Achievement(request):
+    profile = request.user.userprofile
+    if request.method == 'POST':
+        form = AchievementForm(request.POST)
+        if form.is_valid():
+            achievement = form.save(commit=False)
+            achievement.user = profile
+            achievement.save()
+            return redirect('profile_view')
+    else:
+        form = AchievementForm()
+    return render(request, 'add_achievement.html', {'form': form})
+
+@login_required
+def delete_Achievement(request, achievement_id):
+    achievement = get_object_or_404(Achievement, id=achievement_id, user=request.user.userprofile)
+    achievement.delete()
+    return redirect('profile_view')
+
+@login_required
+def add_Certificate(request):
+    profile = request.user.userprofile
+    if request.method == 'POST':
+        form = CertificateForm(request.POST, request.FILES)
+        if form.is_valid():
+            certificate = form.save(commit=False)
+            certificate.user = profile
+            certificate.save()
+            return redirect('profile_view')
+    else:
+        form = CertificateForm()
+    return render(request, 'add_certificate.html', {'form': form})
+
+@login_required
+def delete_Certificate(request, certificate_id):
+    certificate = get_object_or_404(Certificate, id=certificate_id, user=request.user.userprofile)
+    certificate.delete()
+    return redirect('profile_view')
+
+def about(request):
+    return render(request, 'about.html')
+
+def contact(request):
+    return render(request, 'contact.html')
+
+def terms(request):
+    return render(request, 'terms.html')
+
+def privacy(request):
+    return render(request, 'privacy.html')
+
+def copyright(request):
+    return render(request, 'copyright.html')
+
+def report(request):
+    return render(request, 'report.html')

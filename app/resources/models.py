@@ -8,9 +8,11 @@ class UserProfile(models.Model):
     GENDER_CHOICES = [
         ('male', 'مرد'),
         ('female', 'زن'),
+        ('other', 'ترجیح می‌دهم نگویم'),
     ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
     phone = models.CharField(max_length=15, blank=True)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES, blank=True)
     birth_date = models.DateField(null=True, blank=True)
@@ -18,12 +20,13 @@ class UserProfile(models.Model):
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
 
     def __str__(self):
-        return self.user.get_full_name()
+        return self.user.get_full_name() or self.user.username
 
 class Skill(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='skills')
     name = models.CharField(max_length=100)
     level = models.PositiveSmallIntegerField(help_text="عدد بین 0 تا 100")
+    teachable = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} ({self.level}%)"
@@ -32,10 +35,11 @@ class Achievement(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='achievements')
     title = models.CharField(max_length=255)
     description = models.TextField()
-    year = models.PositiveIntegerField()
+    start_year = models.PositiveIntegerField(null=True)
+    end_year = models.PositiveIntegerField(null=True)
 
     def __str__(self):
-        return f"{self.title} - {self.year}"
+        return f"{self.title} - {self.start_year} - {self.end_year}"
 
 class Certificate(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='certificates')
@@ -46,10 +50,6 @@ class Certificate(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.year})"
-
-
-
-
 
 
 class Category(models.Model):
@@ -79,7 +79,6 @@ class Resource(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField(max_length=1000, blank=True)
-    file = models.FileField(upload_to='resources/files/', null=True, blank=True)
     external_url = models.URLField(blank=True, null=True, help_text="اگر فایل آپلود نمی‌کنید، آدرس URL وارد کنید.")
     file_type = models.CharField(max_length=10, choices=FILE_TYPES, default='pdf')
 
@@ -112,5 +111,9 @@ class Comment(models.Model):
     def __str__(self):
         return f'Comment by {self.user.username} on {self.resource.title}'
 
+class ResourceFile(models.Model):
+    resource = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='files')
+    file = models.FileField(upload_to='resources/files/')
+
     def __str__(self):
-        return f"{self.user.username} likes {self.resource.title}"
+        return f"{self.resource.title} - {self.file.name}"

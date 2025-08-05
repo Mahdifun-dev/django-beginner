@@ -7,16 +7,16 @@
           <section class="mb-8">
             <h2 class="text-xl font-bold mb-4 text-gray-800">ویدیوهای برگزیده</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {% for video in videos %}
+              {% for resource in resources %}
                 <div class="video-thumbnail group">
                   <div class="relative rounded-lg overflow-hidden">
                     <img
-                      src="{{ resources.thumbnail }}"
-                      alt="{{ resources.title }}"
+                      src="{{ resource.thumbnail.url }}"
+                      alt="{{ resource.title }}"
                       class="w-full object-cover"
                     />
                     <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded video-duration">
-                      {{ resources.duration }}
+                      {{ resource.duration }}
                     </div>
                     <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity play-icon">
                       <div class="w-12 h-12 flex items-center justify-center">
@@ -25,13 +25,13 @@
                     </div>
                   </div>
                   <div class="mt-2">
-                    <h3 class="font-medium text-gray-800">{{ resources.title }}</h3>
+                    <h3 class="font-medium text-gray-800">{{ resource.title }}</h3>
                     <div class="flex items-center text-sm text-gray-500 mt-1">
-                      <span>{{ resources.instructor }}</span>
+                      <span>{{ resource.instructor }}</span>
                       <span class="mx-1">•</span>
-                      <span>{{ resources.views|intcomma }} بازدید</span>
+                      <span>{{ resource.views|intcomma }} بازدید</span>
                       <span class="mx-1">•</span>
-                      <span>{{ resources.uploaded_at|timesince }} پیش</span>
+                      <span>{{ resource.uploaded_at|timesince }} پیش</span>
                     </div>
                   </div>
                 </div>

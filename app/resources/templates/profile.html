@@ -272,8 +272,8 @@
             <div class="mr-3 relative">
                 <div>
                     <button type="button" id="user-menu-button" class="flex items-center max-w-xs rounded-full focus:outline-none" aria-expanded="false" aria-haspopup="true">
-                        {% if user.profile.image %}
-                          <img class="h-8 w-8 rounded-full" src="{{ user.profile.image.url }}" alt="Profile Image">
+                        {% if profile.profile_picture %}
+                          <img class="h-8 w-8 rounded-full" src="{{ profile.profile_picture.url }}" alt="Profile Image">
                         {% else %}
                           <i class="ri-user-line" style="font-size: 24px;"></i>
                         {% endif %}
@@ -314,11 +314,11 @@
               <div
                 class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow"
               >
-                <img
-                  src="https://readdy.ai/api/search-image?query=professional%2520headshot%2520of%2520a%2520middle%2520eastern%2520man%2520with%2520a%2520friendly%2520smile%2C%2520neutral%2520background%2C%2520high%2520quality%2C%2520professional%2520looking&width=200&height=200&seq=avatar2&orientation=squarish"
-                  alt="تصویر پروفایل"
-                  class="w-full h-full object-cover"
-                />
+                {% if profile.profile_picture %}
+                  <img class="w-full h-full object-cover" src="{{ profile.profile_picture.url }}" alt="Profile Image">
+                {% else %}
+                  <i class="ri-user-line" style="font-size: 80px;"></i>
+                {% endif %}
               </div>
               <div
                 class="avatar-overlay absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 transition-opacity cursor-pointer"
@@ -414,7 +414,8 @@
       </div>
 
       <!-- Main Content -->
-      <div class="w-full md:w-3/4 lg:w-4/5 md:pr-6">
+      <form method="post" enctype="multipart/form-data" class="w-full md:w-3/4 lg:w-4/5 md:pr-6">
+        {% csrf_token %}
         <div class="bg-white rounded shadow-sm p-6 mb-6">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold">مشخصات شخصی</h2>
@@ -432,7 +433,9 @@
               >
               <input
                 type="text"
-                value="علی"
+                name="first_name"
+                {% if request.user != profile.user %}disabled{% endif %}
+                value="{{ form.first_name.value }}"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
               />
             </div>
@@ -442,7 +445,9 @@
               >
               <input
                 type="text"
-                value="محمدی"
+                name="last_name"
+                {% if request.user != profile.user %}disabled{% endif %}
+                value="{{ form.last_name.value }}"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
               />
             </div>
@@ -452,7 +457,9 @@
               >
               <input
                 type="email"
-                value="ali.mohammadi@example.com"
+                name="email"
+                {% if request.user != profile.user %}disabled{% endif %}
+                value="{{ form.email.value }}"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
               />
             </div>
@@ -462,7 +469,9 @@
               >
               <input
                 type="tel"
-                value="۰۹۱۲۳۴۵۶۷۸۹"
+                name="phone"
+                {% if request.user != profile.user %}disabled{% endif %}
+                value="{{ form.phone.value }}"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
               />
             </div>
@@ -472,7 +481,9 @@
               >
               <input
                 type="text"
-                value="۱۳۶۵/۰۴/۱۲"
+                name="birth_date"
+                {% if request.user != profile.user %}disabled{% endif %}
+                value="{{ form.birth_date.value }}"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
               />
             </div>
@@ -483,10 +494,13 @@
               <div class="relative">
                 <select
                   class="w-full px-4 py-2 border border-gray-300 rounded appearance-none focus:outline-none pr-8"
+                  name="gender"
+                  {% if request.user != profile.user %}disabled{% endif %}
+                  value="{{ form.gender.value }}"
                 >
-                  <option>مرد</option>
-                  <option>زن</option>
-                  <option>ترجیح می‌دهم نگویم</option>
+                  <option value="male">مرد</option>
+                  <option value="female">زن</option>
+                  <option value="other">ترجیح می‌دهم نگویم</option>
                 </select>
                 <div
                   class="absolute inset-y-0 left-0 flex items-center px-2 pointer-events-none"
@@ -504,257 +518,168 @@
 
         <div class="bg-white rounded shadow-sm p-6 mb-6">
           <h2 class="text-xl font-bold mb-4">درباره من</h2>
-          <textarea
-            rows="4"
-            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none"
-          >
-استاد دانشگاه تهران با بیش از ۱۰ سال سابقه تدریس در زمینه مهندسی کامپیوتر. متخصص در برنامه‌نویسی پیشرفته و هوش مصنوعی. دارای مدرک دکترا از دانشگاه صنعتی شریف و مقالات متعدد در ژورنال‌های معتبر بین‌المللی.</textarea
-          >
+          <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none" name="bio" {% if request.user != profile.user %}disabled{% endif %}>{{ profile.bio }}</textarea>
+
           <div class="text-left text-xs text-gray-500 mt-1">
             ۰ / ۵۰۰ کاراکتر
           </div>
+          
+          {% if request.user == profile.user %}
+          <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mb-6">ذخیره تغییرات</button>
+          {% endif %}
+  
         </div>
-
         <div class="bg-white rounded shadow-sm p-6 mb-6">
           <h2 class="text-xl font-bold mb-4">مهارت‌های تخصصی</h2>
 
-          <div class="mb-6">
+          <div>
             <h3 class="text-lg font-medium mb-3">مهارت‌های تدریس</h3>
             <div class="flex flex-wrap gap-2 mb-3">
-              <span
-                class="skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center"
-              >
-                برنامه‌نویسی پایتون
-                <button class="ml-1 text-gray-500 hover:text-red-500">
-                  <span class="w-4 h-4 flex items-center justify-center">
-                    <i class="ri-close-line"></i>
-                  </span>
-                </button>
-              </span>
-              <span
-                class="skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center"
-              >
-                هوش مصنوعی
-                <button class="ml-1 text-gray-500 hover:text-red-500">
-                  <span class="w-4 h-4 flex items-center justify-center">
-                    <i class="ri-close-line"></i>
-                  </span>
-                </button>
-              </span>
-              <span
-                class="skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center"
-              >
-                یادگیری ماشین
-                <button class="ml-1 text-gray-500 hover:text-red-500">
-                  <span class="w-4 h-4 flex items-center justify-center">
-                    <i class="ri-close-line"></i>
-                  </span>
-                </button>
-              </span>
-              <span
-                class="skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center"
-              >
-                شبکه‌های عصبی
-                <button class="ml-1 text-gray-500 hover:text-red-500">
-                  <span class="w-4 h-4 flex items-center justify-center">
-                    <i class="ri-close-line"></i>
-                  </span>
-                </button>
-              </span>
-            </div>
-            <div class="flex">
-          <a href="{% url 'add_skill' %}"
-            id="upload-button"
-            class="px-6 py-2 bg-[#2563eb] text-white rounded-button hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 whitespace-nowrap"
-          >
-            افزودن مهارت
-          </a>
+              {% for skill in profile.skills.all %}
+                {% if skill.teachable %}
+                    <span
+                      class="skill-tag bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center"
+                    >
+                        {{ skill.name }}
+                    </span>
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
-
-          <div>
+          <div class="mb-6">
             <h3 class="text-lg font-medium mb-3">سطح دانش</h3>
             <div class="space-y-4">
-              
+          
               {% for skill in profile.skills.all %}
               <div>
-                <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium">{{ skill.name }}</span>
-                  <span class="text-sm text-gray-600">{{ skill.level }}٪</span>
+                <div class="flex justify-between items-center mb-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium">{{ skill.name }}</span>
+                    <span class="text-sm text-gray-600">{{ skill.level }}٪</span>
+                  </div>
+                  {% if request.user == profile.user %}
+                  <a href="{% url 'delete_skill' skill.id %}"
+                     class="text-gray-400 hover:text-red-500 transition"
+                     title="حذف مهارت">
+                    <i class="ri-close-line ri-lg"></i>
+                  </a>
+                  {% endif %}
                 </div>
+          
                 <div class="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    class="bg-primary h-2 rounded-full"
+                    class="bg-[#4285F4] h-2 rounded-full"
                     style="width: {{ skill.level }}%"
                   ></div>
                 </div>
               </div>
               {% endfor %}
-              <div>
-                <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium">هوش مصنوعی</span>
-                  <span class="text-sm text-gray-600">۸۵٪</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    class="bg-[#4285F4] h-2 rounded-full"
-                    style="width: 85%"
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium">یادگیری ماشین</span>
-                  <span class="text-sm text-gray-600">۸۰٪</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    class="bg-[#4285F4] h-2 rounded-full"
-                    style="width: 80%"
-                  ></div>
-                </div>
-              </div>
+          
             </div>
           </div>
+          {% if request.user == profile.user %}
+          
+            <div class="flex">
+              <a href="{% url 'add_skill' %}"
+                id="upload-button"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mb-6"
+              >
+                افزودن مهارت
+              </a>
+            </div>
+          {% endif %}
         </div>
         <div class="bg-white rounded shadow-sm p-6 mb-6">
           <h2 class="text-xl font-bold mb-4">دستاوردهای حرفه‌ای</h2>
 
           <div class="space-y-6">
+            {% for achievement in profile.achievements.all %}
             <div class="border-r-2 border-primary pr-4 relative">
-              <div
-                class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-primary"
-              ></div>
+              <div class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-gray-300"></div>
+              {% if request.user == profile.user %}
+              <a href="{% url 'delete_achievement' achievement.id %}" class="absolute left-2 top-2 text-gray-400 hover:text-red-500 transition" title="حذف دستاورد">
+                <i class="ri-close-line ri-lg"></i>
+              </a>
+              {% endif %}
               <div class="mb-1">
-                <span class="text-sm text-gray-500">۱۳۹۹ - اکنون</span>
+                <span class="text-sm text-gray-500">{{ achievement.start_year }} - {{ achievement.end_year }}</span>
               </div>
-              <h3 class="text-lg font-medium">استاد دانشگاه تهران</h3>
+              <h3 class="text-lg font-medium">{{ achievement.title }}</h3>
               <p class="text-gray-700 mt-1">
-                تدریس دروس پیشرفته هوش مصنوعی و یادگیری ماشین در دانشکده مهندسی
-                کامپیوتر
+                {{ achievement.description }}
               </p>
             </div>
-
-            <div class="border-r-2 border-gray-200 pr-4 relative">
-              <div
-                class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-gray-300"
-              ></div>
-              <div class="mb-1">
-                <span class="text-sm text-gray-500">۱۳۹۵ - ۱۳۹۹</span>
-              </div>
-              <h3 class="text-lg font-medium">
-                پژوهشگر ارشد - پژوهشگاه علوم و فناوری اطلاعات ایران
-              </h3>
-              <p class="text-gray-700 mt-1">
-                هدایت پروژه‌های تحقیقاتی در زمینه پردازش زبان طبیعی و یادگیری
-                عمیق
-              </p>
-            </div>
-
-            <div class="border-r-2 border-gray-200 pr-4 relative">
-              <div
-                class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-gray-300"
-              ></div>
-              <div class="mb-1">
-                <span class="text-sm text-gray-500">۱۳۹۲ - ۱۳۹۵</span>
-              </div>
-              <h3 class="text-lg font-medium">مدرس دانشگاه صنعتی شریف</h3>
-              <p class="text-gray-700 mt-1">
-                تدریس دروس الگوریتم‌های پیشرفته و ساختمان داده‌ها
-              </p>
-            </div>
+            {% endfor %}
           </div>
-
-          <button
+          {% if request.user == profile.user %}
+          <a
+            href="{% url 'add_achievement' %}"
             class="mt-4 text-primary flex items-center text-sm font-medium hover:underline"
           >
             <span class="w-5 h-5 flex items-center justify-center ml-1">
               <i class="ri-add-line"></i>
             </span>
             افزودن دستاورد جدید
-          </button>
+          </a>
+          {% endif %}
         </div>
         <div class="bg-white rounded shadow-sm p-6">
           <h2 class="text-xl font-bold mb-4">مدارک و گواهی‌نامه‌ها</h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="border rounded p-4 flex items-start">
-              <div
-                class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3"
-              >
-                <span
-                  class="w-6 h-6 flex items-center justify-center text-primary"
-                >
-                  <i class="ri-file-text-line"></i>
+            {% for certificate in profile.certificates.all %}
+            <div class="border rounded p-4 flex items-start relative">
+              {% if request.user == profile.user %}
+              <a href="{% url 'delete_certificate' certificate.id %}" class="absolute left-2 top-2 text-gray-400 hover:text-red-500 transition" title="حذف مدرک یا گواهینامه">
+                <i class="ri-close-line ri-lg"></i>
+              </a>
+              {% endif %}
+              <div class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3">
+                <span class="w-6 h-6 flex items-center justify-center text-primary">
+                  <i class="ri-file-text-line"></i> 
                 </span>
               </div>
               <div>
-                <h3 class="font-medium">دکترای مهندسی کامپیوتر</h3>
-                <p class="text-sm text-gray-600">دانشگاه صنعتی شریف - ۱۳۹۲</p>
+                <h3 class="font-medium">{{ certificate.title }}</h3>
+                <p class="text-sm text-gray-600">{{ certificate.organization }} - {{ certificate.year }}</p>
               </div>
             </div>
-
-            <div class="border rounded p-4 flex items-start">
-              <div
-                class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3"
-              >
-                <span
-                  class="w-6 h-6 flex items-center justify-center text-primary"
-                >
-                  <i class="ri-file-text-line"></i>
-                </span>
-              </div>
-              <div>
-                <h3 class="font-medium">کارشناسی ارشد هوش مصنوعی</h3>
-                <p class="text-sm text-gray-600">دانشگاه تهران - ۱۳۸۸</p>
-              </div>
-            </div>
-
-            <div class="border rounded p-4 flex items-start">
-              <div
-                class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3"
-              >
-                <span
-                  class="w-6 h-6 flex items-center justify-center text-primary"
-                >
-                  <i class="ri-file-text-line"></i>
-                </span>
-              </div>
-              <div>
-                <h3 class="font-medium">گواهینامه حرفه‌ای هوش مصنوعی</h3>
-                <p class="text-sm text-gray-600">دیپ لرنینگ - ۱۳۹۷</p>
-              </div>
-            </div>
-
-            <div class="border rounded p-4 flex items-start">
-              <div
-                class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3"
-              >
-                <span
-                  class="w-6 h-6 flex items-center justify-center text-primary"
-                >
-                  <i class="ri-file-text-line"></i>
-                </span>
-              </div>
-              <div>
-                <h3 class="font-medium">دوره تخصصی پردازش زبان طبیعی</h3>
-                <p class="text-sm text-gray-600">استنفورد آنلاین - ۱۳۹۶</p>
-              </div>
-            </div>
+            {% endfor %}
           </div>
-
-          <button
+          {% if request.user == profile.user %}
+          <a 
+            href="{% url 'add_certificate' %}"
             class="mt-4 text-primary flex items-center text-sm font-medium hover:underline"
           >
             <span class="w-5 h-5 flex items-center justify-center ml-1">
               <i class="ri-add-line"></i>
             </span>
-            افزودن مدرک جدید
-          </button>
+            افزودن مدرک یا گواهینامه جدید
+          </a>
         </div>
-      </div>
+        {% endif %}
+      </form>
     </div>
-
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const userMenuButton = document.getElementById("user-menu-button");
+        const userDropdown = document.getElementById("user-dropdown");
+    
+        if (userMenuButton && userDropdown) {
+          userMenuButton.addEventListener("click", function (e) {
+            e.stopPropagation();
+            userDropdown.classList.toggle("show");
+          });
+    
+          // Hide dropdown when clicking outside
+          document.addEventListener("click", function (e) {
+            if (!userDropdown.contains(e.target) && !userMenuButton.contains(e.target)) {
+              userDropdown.classList.remove("show");
+            }
+          });
+        }
+      });
+    </script>
     <script id="profileImageUpload">
       document.addEventListener("DOMContentLoaded", function () {
         const avatarUpload = document.querySelector(".avatar-upload");
