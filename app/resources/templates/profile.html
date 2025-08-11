@@ -272,8 +272,8 @@
             <div class="mr-3 relative">
                 <div>
                     <button type="button" id="user-menu-button" class="flex items-center max-w-xs rounded-full focus:outline-none" aria-expanded="false" aria-haspopup="true">
-                        {% if profile.profile_picture %}
-                          <img class="h-8 w-8 rounded-full" src="{{ profile.profile_picture.url }}" alt="Profile Image">
+                        {% if user_profile_picture_url %}
+                          <img class="h-8 w-8 rounded-full" src="{{ user_profile_picture_url }}" alt="Profile Image">
                         {% else %}
                           <i class="ri-user-line" style="font-size: 24px;"></i>
                         {% endif %}
@@ -594,8 +594,8 @@
 
           <div class="space-y-6">
             {% for achievement in profile.achievements.all %}
-            <div class="border-r-2 border-primary pr-4 relative">
-              <div class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-gray-300"></div>
+            <div class="border-r-2 border-[#4285F4] pr-4 relative">
+              <div class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-[#4285F4]"></div>
               {% if request.user == profile.user %}
               <a href="{% url 'delete_achievement' achievement.id %}" class="absolute left-2 top-2 text-gray-400 hover:text-red-500 transition" title="حذف دستاورد">
                 <i class="ri-close-line ri-lg"></i>
@@ -623,6 +623,40 @@
           </a>
           {% endif %}
         </div>
+        <div class="bg-white rounded shadow-sm p-6 mb-6">
+          <h2 class="text-xl font-bold mb-4">تحصیلات</h2>
+
+          <div class="space-y-6">
+            {% for education in profile.educations.all %}
+            <div class="border-r-2 border-[#4285F4] pr-4 relative">
+              <div class="absolute right-[-9px] top-0 w-4 h-4 rounded-full bg-[#4285F4]"></div>
+              {% if request.user == profile.user %}
+              <a href="{% url 'delete_education' education.id %}" class="absolute left-2 top-2 text-gray-400 hover:text-red-500 transition" title="حذف تحصیلات">
+                <i class="ri-close-line ri-lg"></i>
+              </a>
+              {% endif %}
+              <div class="mb-1">
+                <span class="text-sm text-gray-500">{{ education.start_year }} - {{ education.end_year }}</span>
+              </div>
+              <h3 class="text-lg font-medium">{{ education.degree }} - {{ education.institution }}</h3>
+              <p class="text-gray-700 mt-1">
+                {{ education.description }}
+              </p>
+            </div>
+            {% endfor %}
+          </div>
+          {% if request.user == profile.user %}
+          <a
+            href="{% url 'add_education' %}"
+            class="mt-4 text-primary flex items-center text-sm font-medium hover:underline"
+          >
+            <span class="w-5 h-5 flex items-center justify-center ml-1">
+              <i class="ri-add-line"></i>
+            </span>
+            افزودن تحصیلات جدید
+          </a>
+          {% endif %}
+        </div>
         <div class="bg-white rounded shadow-sm p-6">
           <h2 class="text-xl font-bold mb-4">مدارک و گواهی‌نامه‌ها</h2>
 
@@ -635,7 +669,7 @@
               </a>
               {% endif %}
               <div class="w-10 h-10 flex items-center justify-center bg-blue-50 rounded mr-3">
-                <span class="w-6 h-6 flex items-center justify-center text-primary">
+                <span class="w-6 h-6 flex items-center justify-center text-[#4285F4]">
                   <i class="ri-file-text-line"></i> 
                 </span>
               </div>

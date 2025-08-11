@@ -1,5 +1,5 @@
 from django import forms
-from .models import Resource, Comment, Skill, Achievement, Certificate, UserProfile
+from .models import Resource, Comment, Skill, Achievement, Certificate, UserProfile, Education
 from django.contrib.auth.models import User
 
 
@@ -33,7 +33,44 @@ class ProfileForm(forms.ModelForm):
         return profile
 
 
+
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+    """A custom widget to allow multiple file selection."""
+    allow_multiple_selected = True
+
+class MultipleFileField(forms.FileField):
+    """
+    A custom form field that can handle multiple files.
+    It uses our MultipleFileInput widget and cleans the data into a list of files.
+    """
+    def __init__(self, *args, **kwargs):
+        # We set our custom widget as the default
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        # This clean method is the core of the solution. It takes the raw data
+        # from the request and processes it into a clean list of files.
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            # Handle the case of a single file being uploaded
+            result = [single_file_clean(data, initial)]
+        return result
+
+
 class ResourceForm(forms.ModelForm):
+    files = MultipleFileField(
+        required=False,
+        help_text="Select one or more files to upload.",
+        widget=MultipleFileInput(attrs={
+            'class': 'hidden', # We want to hide the default input
+            'id': 'file-input'  # A nice, specific ID for our JavaScript
+        })
+    )
     class Meta:
         model = Resource
         fields = ["title", "description", "category", "tags", "instructor_name", "external_url", "privacy", "file_type", "thumbnail"]
@@ -129,5 +166,17 @@ class CertificateForm(forms.ModelForm):
             'organization': forms.TextInput(attrs={'class': 'form-input'}),
             'year': forms.NumberInput(attrs={'class': 'form-input'}),
             'file': forms.FileInput(attrs={'class': 'form-file-input'}),
+        }
+        
+class EducationForm(forms.ModelForm):
+    class Meta:
+        model = Education
+        fields = ['degree', 'institution', 'start_year', 'end_year', 'description']
+        widgets = {
+            'degree': forms.TextInput(attrs={'class': 'form-input'}),
+            'institution': forms.TextInput(attrs={'class': 'form-input'}),
+            'start_year': forms.NumberInput(attrs={'class': 'form-input'}),
+            'end_year': forms.NumberInput(attrs={'class': 'form-input'}),
+            'description': forms.Textarea(attrs={'class': 'form-textarea'}),
         }
 

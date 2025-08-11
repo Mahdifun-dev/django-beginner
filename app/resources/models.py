@@ -50,6 +50,23 @@ class Certificate(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.year})"
+    
+class Education(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='educations')
+    
+    degree = models.CharField(max_length=255, verbose_name="مدرک تحصیلی") # e.g., "دکتری ادبیات فارسی"
+    institution = models.CharField(max_length=255, verbose_name="دانشگاه یا موسسه") # e.g., "دانشگاه تهران"
+    start_year = models.PositiveIntegerField(verbose_name="سال شروع")
+    end_year = models.PositiveIntegerField(verbose_name="سال پایان", null=True, blank=True)
+    description = models.TextField(verbose_name="توضیحات", blank=True, help_text="اختیاری. مثلا عنوان پایان‌نامه یا افتخارات.")
+
+    class Meta:
+        verbose_name = "مدرک تحصیلی"
+        verbose_name_plural = "سوابق تحصیلی"
+        ordering = ['-start_year'] # Show the most recent degrees first
+
+    def __str__(self):
+        return f"{self.degree} از {self.institution}"
 
 
 class Category(models.Model):

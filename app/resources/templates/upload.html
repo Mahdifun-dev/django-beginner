@@ -183,7 +183,11 @@
               <p class="text-gray-500">یا برای انتخاب فایل کلیک کنید</p>
             </div>
           </div>
-          <input type="file" id="file-input" class="hidden" name="files" multiple />
+          {{ form.files }}
+  
+          {% for error in form.files.errors %}
+              <p class="text-red-500 text-xs italic">{{ error }}</p>
+          {% endfor %}
         </div>
       </div>
 

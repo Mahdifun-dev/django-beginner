@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
-from .models import Resource, UserProfile, Skill, Achievement, Certificate, User
-from .forms import ResourceForm, CommentForm, SkillForm, AchievementForm, CertificateForm, ProfileForm
+from .models import Resource, UserProfile, Skill, Achievement, Certificate, User, Education
+from .forms import ResourceForm, CommentForm, SkillForm, AchievementForm, CertificateForm, ProfileForm, EducationForm
 from django.shortcuts import get_object_or_404, redirect
 from django.http import Http404, HttpResponseForbidden
 from django.contrib.admin.views.decorators import staff_member_required
@@ -16,19 +16,22 @@ from .models import ResourceFile
 def home(request):
     return render(request, "resources/home.html")
 
-
 def resource_list(request):
+    # Start with a base queryset of approved resources
+    queryset = Resource.objects.filter(is_approved=True)
+    
     query = request.GET.get('q')
     if query:
-        resources = Resource.objects.filter(
+        # If there's a search query, filter the base queryset
+        queryset = queryset.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query) |
             Q(tags__name__icontains=query)
         ).distinct()
-    else:
-        resources = Resource.objects.filter(is_approved=True)
-        
-    resources = Resource.objects.filter(is_approved=True).order_by("-uploaded_at")
+    
+    # Finally, order the result
+    resources = queryset.order_by("-uploaded_at")
+    
     return render(request, "resources_list.html", {"resources": resources})
 
 def signup(request):
@@ -57,7 +60,7 @@ def upload_resource(request):
 
             # دریافت همه فایل‌ها
             print('here is files')
-            files = request.FILES.getlist('files')
+            files = form.cleaned_data["files"]
             for f in files:
                 ResourceFile.objects.create(resource=resource, file=f)
             # اگر می‌خواهید اولین فایل را در فیلد file اصلی هم ذخیره کنید:
@@ -187,9 +190,8 @@ def ProfileDetailView(request):
 
 
 @login_required
-def ProfileView(request, username):
-    user = get_object_or_404(User, username=username)
-    profile = get_object_or_404(UserProfile, user=user)
+def Profile(request):
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=profile)
@@ -199,7 +201,49 @@ def ProfileView(request, username):
     else:
         form = ProfileForm(instance=request.user.userprofile, user=request.user)
 
-    return render(request, 'profile.html', {'form': form, 'profile': profile, 'user': user})
+    return render(request, 'profile.html', {'form': form, 'profile': profile})
+
+
+@login_required
+def profile_view(request, username):
+    """
+    Displays a user's profile page with all their related information.
+    """
+    # Use get_object_or_404 to handle cases where the user doesn't exist
+    profile_user = get_object_or_404(User, username=username)
+
+    # Fetch all related data using the 'profile_user' object
+    # Note: This assumes you have related_names set up or uses default Django ones.
+    # It also assumes a UserProfile is created for each User.
+    try:
+        user_profile = profile_user.userprofile
+        skills = user_profile.skills.all().order_by('-level')
+        achievements = user_profile.achievements.all().order_by('-start_year') # For 'Work Experience'
+        certificates = user_profile.certificates.all().order_by('-year') # For 'Publications'
+        educations = user_profile.educations.all().order_by('-start_year') # For 'Education'
+    except User.userprofile.RelatedObjectDoesNotExist:
+        # Handle cases where a profile object hasn't been created for a user
+        user_profile = None
+        skills = []
+        achievements = []
+        certificates = []
+        educations = []
+
+    # Fetch resources uploaded by this user for the 'Recent Articles' section
+    recent_resources = Resource.objects.filter(uploader=profile_user, is_approved=True).order_by('-uploaded_at')[:5]
+
+    context = {
+        'profile_user': profile_user,
+        'user_profile': user_profile,
+        'skills': skills,
+        'achievements': achievements,
+        'certificates': certificates,
+        'educations': educations,
+        'recent_resources': recent_resources,
+    }
+
+    return render(request, 'profile_view.html', context)
+
 
 @login_required
 def add_skill(request):
@@ -261,6 +305,28 @@ def delete_Certificate(request, certificate_id):
     certificate = get_object_or_404(Certificate, id=certificate_id, user=request.user.userprofile)
     certificate.delete()
     return redirect('profile_view')
+
+
+@login_required
+def add_Education(request):
+    profile = request.user.userprofile
+    if request.method == 'POST':
+        form = EducationForm(request.POST, request.FILES)
+        if form.is_valid():
+            education = form.save(commit=False)
+            education.user = profile
+            education.save()
+            return redirect('profile_view')
+    else:
+        form = EducationForm()
+    return render(request, 'add_education.html', {'form': form})
+
+@login_required
+def delete_Education(request, education_id):
+    education = get_object_or_404(Education, id=education_id, user=request.user.userprofile)
+    education.delete()
+    return redirect('profile_view')
+
 
 def about(request):
     return render(request, 'about.html')

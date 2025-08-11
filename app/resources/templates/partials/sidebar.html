@@ -1,0 +1,173 @@
+<div id="sidebar" class="transition-all duration-300 ease-in-out overflow-hidden bg-white rounded shadow-sm p-4">
+
+<div class="bg-white rounded shadow-sm p-4">
+    <nav>
+    <ul class="space-y-1">
+        <li>
+        <a
+            href="{% url 'home' %}"
+            class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+        >
+            <div class="w-5 h-6 flex items-center justify-center ml-2">
+            <i class="ri-home-line"></i>
+            </div>
+            <span class="sidebar-label">صفحه اصلی</span>
+        </a>
+        </li>
+        <li>
+        <a
+            href="{% url 'resources_list' %}"
+            class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+        >
+            <div class="w-5 h-6 flex items-center justify-center ml-2">
+            <i class="ri-fire-line"></i>
+            </div>
+            <span class="sidebar-label">محبوب‌ترین‌ها</span>
+        </a>
+        </li>
+        <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-time-line"></i>
+        </div>
+        <span class="sidebar-label">جدیدترین‌ها</span>
+    </a>
+        </li>
+    <hr class="border-[#272727] my-4 sidebar-label" />
+    <h3 class="text-md font-bold mb-2 sidebar-label">موضوعات تحصیلی</h3>
+        <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-calculator-line"></i>
+        </div>
+        <span class="sidebar-label">ریاضیات</span>
+    </a>
+        </li>
+            <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-atom-line"></i>
+        </div>
+        <span class="sidebar-label">فیزیک</span>
+    </a>
+            </li>
+            <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-flask-line"></i>
+        </div>
+        <span class="sidebar-label">شیمی</span>
+    </a>
+            </li>
+            <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-plant-line"></i>
+        </div>
+        <span class="sidebar-label">زیست‌شناسی</span>
+    </a>
+            </li>
+            <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-computer-line"></i>
+        </div>
+        <span class="sidebar-label">علوم کامپیوتر</span>
+    </a>
+            </li>
+    <hr class="border-[#272727] my-4 sidebar-label" />
+    <h3 class="text-md font-bold mb-2 sidebar-label">مجموعه‌های من</h3>
+    <div class="space-y-1">
+            <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-bookmark-line"></i>
+        </div>
+        <span class="sidebar-label">ذخیره شده‌ها</span>
+    </a>
+            </li>
+            <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-history-line"></i>
+        </div>
+        <span class="sidebar-label">تاریخچه</span>
+    </a>
+            </li>
+            <li>
+    <a
+        href="{% url 'upload_resource' %}"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-upload-line"></i>
+        </div>
+        <span class="sidebar-label">آپلودهای من</span>
+    </a>
+            </li>
+            
+    </div>
+    <hr class="border-[#272727] my-4 sidebar-label" />
+    <h3 class="text-md font-bold mb-2 sidebar-label">تنظیمات</h3>
+    <div class="space-y-1">
+            <li>
+    <a
+        href="{% url 'profile_view' %}"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-user-line"></i>
+        </div>
+        <span class="sidebar-label">پروفایل من</span>
+    </a>
+            </li>
+            <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-settings-line"></i>
+        </div>
+        <span class="sidebar-label">تنظیمات</span>
+    </a>
+            </li>
+            <li>
+    <a
+        href="#"
+        class="sidebar-item flex items-center py-2 px-3 rounded text-sm font-medium sidebar-icon"
+    >
+        <div class="w-5 h-6 flex items-center justify-center ml-2">
+        <i class="ri-question-line"></i>
+        </div>
+        <span class="sidebar-label">راهنما</span>
+    </a>
+        </li>
+    </ul>
+    
+</div>
+</div>

@@ -1,0 +1,136 @@
+
+<!-- Footer -->
+<footer class="bg-gray-100 border-t border-gray-200 py-8">
+    <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+        <a href="#" class="flex items-center mb-4">
+            <span class="text-2xl font-['Pacifico'] text-[#1e88e5]">logo</span>
+        </a>
+        <p class="text-gray-600 text-sm">
+            پلتفرم آموزشی برای دانشجویان ایرانی با هدف اشتراک‌گذاری و دسترسی
+            به محتوای آموزشی با کیفیت
+        </p>
+        </div>
+        <div>
+        <h3 class="text-gray-800 font-bold mb-4">دسترسی سریع</h3>
+        <ul class="space-y-2 text-gray-600">
+            <li>
+            <a href="{% url 'home' %}" class="hover:text-[#1e88e5] transition-colors"
+                >صفحه اصلی</a
+            >
+            </li>
+            <li>
+            <a href="{% url 'resources_list' %}" class="hover:text-[#1e88e5] transition-colors"
+                >دوره‌های آموزشی</a
+            >
+            </li>
+            <li>
+            <a href="{% url 'upload_resource' %}" class="hover:text-[#1e88e5] transition-colors"
+                >آپلود محتوا</a
+            >
+            </li>
+            <li>
+            <a href="{% url 'about' %}" class="hover:text-[#1e88e5] transition-colors"
+                >درباره ما</a
+            >
+            </li>
+            <li>
+            <a href="{% url 'contact' %}" class="hover:text-[#1e88e5] transition-colors"
+                >تماس با ما</a
+            >
+            </li>
+        </ul>
+        </div>
+        <div>
+        <h3 class="text-gray-800 font-bold mb-4">قوانین و مقررات</h3>
+        <ul class="space-y-2 text-gray-600">
+            <li>
+            <a href="{% url 'terms' %}" class="hover:text-[#1e88e5] transition-colors"
+                >شرایط استفاده</a
+            >
+            </li>
+            <li>
+            <a href="{% url 'privacy' %}" class="hover:text-[#1e88e5] transition-colors"
+                >حریم خصوصی</a
+            >
+            </li>
+            <li>
+            <a href="{% url 'upload_resource' %}" class="hover:text-[#1e88e5] transition-colors"
+                >قوانین آپلود محتوا</a
+            >
+            </li>
+            <li>
+            <a href="{% url 'copyright' %}" class="hover:text-[#1e88e5] transition-colors"
+                >حقوق مؤلفین</a
+            >
+            </li>
+            <li>
+            <a href="{% url 'report' %}" class="hover:text-[#1e88e5] transition-colors"
+                >گزارش تخلف</a
+            >
+            </li>
+        </ul>
+        </div>
+        <div>
+        <h3 class="text-gray-800 font-bold mb-4">عضویت در خبرنامه</h3>
+        <p class="text-gray-600 text-sm mb-4">
+            برای دریافت آخرین اخبار و بروزرسانی‌ها، در خبرنامه ما عضو شوید
+        </p>
+        <div class="flex">
+            <input
+            type="email"
+            placeholder="ایمیل خود را وارد کنید"
+            class="bg-gray-300 border-none text-gray-600 py-2 px-4 rounded-r-md focus:outline-none flex-grow"
+            />
+            <button
+            class="bg-[#1e88e5] text-white py-2 px-4 rounded-l-md hover:bg-red-700 transition-colors whitespace-nowrap !rounded-button"
+            >
+            عضویت
+            </button>
+        </div>
+        </div>
+    </div>
+    <div
+        class="mt-8 pt-8 border-t border-[#272727] flex flex-col md:flex-row justify-between items-center"
+    >
+        <p class="text-gray-400 text-sm mb-4 md:mb-0">
+        © ۱۴۰۴ تمامی حقوق محفوظ است.
+        </p>
+        <div class="flex space-x-4 space-x-reverse">
+        <a
+            href="#"
+            class="text-gray-400 hover:text-white transition-colors"
+        >
+            <div class="w-8 h-8 flex items-center justify-center">
+            <i class="ri-instagram-line ri-lg"></i>
+            </div>
+        </a>
+        <a
+            href="#"
+            class="text-gray-400 hover:text-white transition-colors"
+        >
+            <div class="w-8 h-8 flex items-center justify-center">
+            <i class="ri-telegram-line ri-lg"></i>
+            </div>
+        </a>
+        <a
+            href="#"
+            class="text-gray-400 hover:text-white transition-colors"
+        >
+            <div class="w-8 h-8 flex items-center justify-center">
+            <i class="ri-linkedin-line ri-lg"></i>
+            </div>
+        </a>
+        <a
+            href="#"
+            class="text-gray-400 hover:text-white transition-colors"
+        >
+            <div class="w-8 h-8 flex items-center justify-center">
+            <i class="ri-twitter-x-line ri-lg"></i>
+            </div>
+        </a>
+        </div>
+    </div>
+    </div>
+</footer>

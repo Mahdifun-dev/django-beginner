@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>پروفایل کاربری</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#2563eb", secondary: "#60a5fa" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-4px)' },
+              }
+            },
+            animation: {
+              float: 'float 2s ease-in-out infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @font-face {
+      font-family: 'Vazir';
+      src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+      }
+      body {
+      font-family: 'Vazir', sans-serif;
+          background-color: #f8f9fa;
+      color: #1f2937;
+      }
+      :where([class^="ri-"])::before {
+      content: "\f3c2";
+      }
+      .video-thumbnail:hover .video-duration {
+      background-color: #FF0000;
+      }
+      .video-thumbnail:hover .play-icon {
+      opacity: 1;
+      }
+      input[type="search"]::-webkit-search-decoration,
+      input[type="search"]::-webkit-search-cancel-button,
+      input[type="search"]::-webkit-search-results-button,
+      input[type="search"]::-webkit-search-results-decoration {
+      display: none;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #a1a1a1;
+      }
+      .switch-input {
+      height: 0;
+      width: 0;
+      visibility: hidden;
+      position: absolute;
+      }
+      .switch-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      width: 44px;
+      height: 22px;
+      background: #3F3F3F;
+      border-radius: 100px;
+      position: relative;
+      transition: background-color 0.2s;
+      }
+      .switch-label .switch-button {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 45px;
+      transition: 0.2s;
+      background: #fff;
+      box-shadow: 0 0 2px 0 rgba(10, 10, 10, 0.29);
+      }
+      .switch-input:checked + .switch-label {
+      background: #FF0000;
+      }
+      .switch-input:checked + .switch-label .switch-button {
+      right: calc(100% - 2px);
+      transform: translateX(100%);
+      }
+      
+      .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: white;
+          min-width: 160px;
+          box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+          z-index: 1;
+          border-radius: 8px;
+      }
+      .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+      }
+      .dropdown-content a:hover {
+          background-color: #f1f5f9;
+          border-radius: 8px;
+      }
+      .dropdown-content form {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+      }
+      .dropdown-content form:hover {
+          background-color: #f1f5f9;
+          border-radius: 8px;
+      }
+      .show {
+          display: block;
+      }
+      .sidebar-item.active {
+          background-color: rgba(66, 133, 244, 0.1);
+          color: #4285F4;
+          border-right: 3px solid #4285F4;
+      }
+      .avatar-upload:hover .avatar-overlay {
+          opacity: 1;
+      }
+      .sidebar-item.active {
+          background-color: rgba(66, 133, 244, 0.1);
+          color: #4285F4;
+          border-right: 3px solid #4285F4;
+      }
+      .card {
+          transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      input:focus, textarea:focus {
+          border-color: #4285F4;
+          box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+      }
+      .skill-tag {
+          transition: all 0.2s;
+      }
+      .skill-tag:hover {
+          background-color: #4285F4;
+          color: white;
+      }
+    </style>
+    {% block head %}{% endblock %}
+  </head>
+  <body class="min-h-screen">
+    <!-- Header -->
+    <header
+      class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm"
+    >
+      <div class="flex items-center justify-between px-4 py-2">
+        <!-- Menu and Logo -->
+        <div class="flex items-center gap-4">
+          <button
+            onclick="toggleSidebar()"
+            class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+          >
+            <i class="ri-menu-line ri-lg"></i>
+          </button>
+          <a href="{% url 'resources_list' %}" class="flex items-center">
+            <span class="text-2xl font-['Pacifico'] text-[#1e88e5]">logo</span>
+          </a>
+        </div>
+        <!-- Search Bar -->
+
+
+
+          <form method="get" action="{% url 'resources_list' %}" class="flex-grow max-w-2xl mx-4">
+            <div class="relative">
+              <input
+                type="search"
+                name="q"  
+                placeholder="جستجو..."
+                class="w-full bg-gray-50 border border-gray-200 text-gray-900 py-2 px-4 pr-10 rounded-full focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4]"
+                value="{{ request.GET.q }}"
+              />
+              <div class="absolute left-3 top-1/2 transform -translate-y-1/2 flex gap-2">
+                <button type="submit"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#4285F4]"
+                >
+                  <i class="ri-search-line ri-lg"></i>
+                </button>
+                <button type="button"
+                  class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#4285F4]"
+                >
+                  <i class="ri-mic-line ri-lg"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+        <!-- User Actions -->
+        <div class="flex items-center gap-2">
+          <a
+            class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            href="{% url 'upload_resource' %}"
+          >
+            <i class="ri-upload-line ri-lg"></i>
+          </a>
+            <button
+              class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            >
+              <i class="ri-notification-line ri-lg"></i>
+            </button>
+            <button
+              class="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full"
+            >
+              <i class="ri-global-line ri-lg"></i>
+            </button>
+
+
+            {% if user.is_authenticated %}
+
+            <div class="mr-3 relative">
+                <div>
+                    <button type="button" id="user-menu-button" class="flex items-center max-w-xs rounded-full focus:outline-none" aria-expanded="false" aria-haspopup="true">
+                        {% if user_profile_picture_url %}
+                          <img class="h-8 w-8 rounded-full" src="{{ user_profile_picture_url }}" alt="Profile Image">
+                        {% else %}
+                          <i class="ri-user-line" style="font-size: 24px;"></i>
+                        {% endif %}
+                        <span class="mr-2 text-sm font-medium text-gray-700">{{ user.username }}</span>
+                        <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                    </button>
+                </div>
+                <div id="user-dropdown" class="dropdown-content left-0 mt-2">
+                    <a href="{% url 'profile_view' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">پروفایل</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">تنظیمات</a>
+                    <form action="{% url 'logout' %}" method="post" class="inline ">
+                      {% csrf_token %}
+                      <button type="submit"
+                              class="block w-full h-full text-sm text-gray-700 text-right ">
+                        خروج
+                      </button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+              <!-- اگر لاگین نکرده بود، آیکون لاگین -->
+              <a href="{% url 'login' %}">
+                <i class="ri-login-box-line" style="font-size: 24px;"></i> ورود
+              </a>
+            {% endif %}
+
+        </div>
+      </div>
+    </header>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Profile Sidebar -->
+        <div class="lg:col-span-1">
+          <!-- Profile Card -->
+          <div class="bg-white rounded-lg p-6 profile-card mb-6">
+            <div class="text-center">
+              {% if user_profile.profile_picture %}
+                <img
+                  src="{{ user_profile.profile_picture.url }}"
+                  alt="تصویر پروفایل"
+                  class="w-32 h-32 rounded-full mx-auto mb-4 object-cover object-top"
+                />
+              {% else %}
+                <div class="w-32 h-32 rounded-full mx-auto mb-4 bg-gray-200 flex items-center justify-center">
+                  <i class="ri-user-line text-5xl text-gray-500"></i>
+                </div>
+              {% endif %}
+
+              <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                {{ profile_user.get_full_name|default:profile_user.username }}
+              </h1>
+              
+              {% if user_profile.bio %}
+                <p class="text-gray-600 mb-4">{{ user_profile.title|default:"دانشجو و پژوهشگر" }}</p>
+              {% endif %}
+
+              <div class="flex items-center justify-center gap-2 text-sm text-gray-600 mb-4">
+                <div class="w-4 h-4 flex items-center justify-center">
+                  <i class="ri-mail-line"></i>
+                </div>
+                {{ profile_user.email }}
+              </div>
+
+              <div class="flex justify-center gap-4 text-sm text-gray-500">
+                <span>بازدید: {{ user_profile.view_count|default:0 }}</span>
+                <span>امتیاز: ۴.۹/۵</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact & Social -->
+          <div class="bg-white rounded-lg p-6 profile-card mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              راه‌های ارتباطی
+            </h3>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full"
+                >
+                  <i class="ri-linkedin-fill text-blue-600"></i>
+                </div>
+                <span class="text-gray-700">LinkedIn</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full"
+                >
+                  <i class="ri-github-fill text-gray-700"></i>
+                </div>
+                <span class="text-gray-700">ResearchGate</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-full"
+                >
+                  <i class="ri-google-fill text-red-600"></i>
+                </div>
+                <span class="text-gray-700">Google Scholar</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="bg-white rounded-lg p-6 profile-card">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              آمار فعالیت
+            </h3>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">تعداد دانشجو</span>
+                <span class="font-semibold text-[#4285F4]">۱۲۸</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">سال تجربه</span>
+                <span class="font-semibold text-[#4285F4]">۱۵</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">مقالات منتشره</span>
+                <span class="font-semibold text-[#4285F4]">۴۲</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">کتاب‌های تألیفی</span>
+                <span class="font-semibold text-[#4285F4]">۸</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+          <!-- About Section -->
+           <div class="bg-white rounded-lg p-6 profile-card mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">درباره من</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+              {{ user_profile.bio|linebreaks|default:"اطلاعاتی ثبت نشده است." }}
+            </p>
+            
+            <div class="mt-6">
+              <h3 class="text-sm font-medium text-gray-900 mb-3">تخصص‌ها:</h3>
+              <div class="flex flex-wrap gap-2">
+                  {% for skill in skills %} <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">{{ skill.name }}</span>
+                  {% empty %}
+                    <p class="text-gray-500 text-sm">تخصصی ثبت نشده است.</p>
+                  {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Skills Section -->
+           <div class="bg-white rounded-lg p-6 profile-card mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">مهارت‌های تخصصی</h2>
+            <div class="space-y-6">
+              {% for skill in skills %}
+                <div class="skill-item">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-700 font-medium">{{ skill.name }}</span>
+                    <span class="text-sm text-gray-500">{{ skill.level }}٪</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      class="bg-[#4285F4] h-2 rounded-full progress-bar"
+                      style="width: {{ skill.level }}%"
+                    ></div>
+                  </div>
+                </div>
+              {% empty %}
+                <p class="text-gray-500">مهارتی ثبت نشده است.</p>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Experience Section -->
+           <div class="bg-white rounded-lg p-6 profile-card mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">تجربیات کاری</h2>
+            <div class="space-y-6">
+              {% for achievement in achievements %}
+                <div class="achievement-card bg-gray-50 p-4 rounded-lg">
+                  <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-semibold text-gray-900">{{ achievement.title }}</h3>
+                    <span class="text-sm text-gray-500">{{ achievement.start_year }} - {% if achievement.end_year %}{{ achievement.end_year }}{% else %}اکنون{% endif %}</span>
+                  </div>
+                  <p class="text-gray-700 text-sm">
+                    {{ achievement.description|linebreaks }}
+                  </p>
+                </div>
+              {% empty %}
+                <p class="text-gray-500">تجربه‌ای ثبت نشده است.</p>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Education Section -->
+          <div class="bg-white rounded-lg p-6 profile-card mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">تحصیلات</h2>
+            <div class="education-timeline relative pr-8 space-y-6">
+              {% for education in educations %}
+              <div class="relative">
+                <div class="timeline-dot"></div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <div class="flex items-center gap-3 mb-2">
+                    <div
+                      class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full"
+                    >
+                      <i class="ri-graduation-cap-line text-blue-600"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-gray-900">
+                          {{ education.degree }}
+                      </h3>
+                      <p class="text-sm text-gray-600">{{ education.institution }}</p>
+                    </div>
+                  </div>
+                  <p class="text-sm text-gray-500 mr-13">{{ education.start_year }} - {{ education.end_year }}</p>
+                  <p class="text-sm text-gray-700 mr-13">
+                    {{ education.description|linebreaks }}
+                  </p>
+                </div>
+              </div>
+              
+              {% empty %}
+                <p class="text-gray-500">تحصیلاتی ثبت نشده است.</p>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="bg-white rounded-lg p-6 profile-card">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">منابع اخیر</h2>
+            <div class="space-y-4">
+              {% for resource in recent_resources %}
+                <div class="border-r-4 border-[#4285F4] bg-blue-50 p-4 rounded-lg">
+                  <h3 class="font-medium text-gray-900 mb-1">{{ resource.title }}</h3>
+                  <p class="text-sm text-gray-600 mb-2">
+                    دسته: {{ resource.category.name }} - تاریخ انتشار: {{ resource.uploaded_at|date:"Y/m/d" }}
+                  </p>
+                  <p class="text-xs text-gray-500">دانلود: {{ resource.download_count }}</p>
+                </div>
+              {% empty %}
+                <p class="text-gray-500">منبعی ثبت نشده است.</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script id="profile-interactions">
+      document.addEventListener("DOMContentLoaded", function () {
+        const skillBars = document.querySelectorAll(".progress-bar");
+
+        const observerOptions = {
+          threshold: 0.5,
+          rootMargin: "0px 0px -100px 0px",
+        };
+
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const bar = entry.target;
+              const width = bar.style.width;
+              bar.style.width = "0%";
+              setTimeout(() => {
+                bar.style.width = width;
+              }, 100);
+            }
+          });
+        }, observerOptions);
+
+        skillBars.forEach((bar) => observer.observe(bar));
+      });
+    </script>
+
+    <script id="contact-buttons">
+      document.addEventListener("DOMContentLoaded", function () {
+        const contactBtn = document.querySelector("button:has(.ri-message-3-line)");
+        const downloadBtn = document.querySelector("button:has(.ri-download-line)");
+
+        if (contactBtn) {
+          contactBtn.addEventListener("click", function () {
+            alert("ارتباط مستقیم با دکتر احمدی برقرار خواهد شد");
+          });
+        }
+
+        if (downloadBtn) {
+          downloadBtn.addEventListener("click", function () {
+            alert("رزومه دکتر احمدی در حال دانلود است...");
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
