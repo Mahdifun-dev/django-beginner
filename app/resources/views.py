@@ -32,7 +32,7 @@ def resource_list(request):
     # Finally, order the result
     resources = queryset.order_by("-uploaded_at")
     
-    return render(request, "resources_list.html", {"resources": resources})
+    return render(request, "resources/resources_list.html", {"resources": resources})
 
 def signup(request):
     if request.method == "POST":
@@ -89,7 +89,7 @@ def upload_resource(request):
             messages.error(request, 'خطا در فرم. لطفاً اطلاعات را بررسی کنید.')
     else:
         form = ResourceForm()
-    return render(request, 'upload.html', {'form': form})
+    return render(request, "resources/upload.html", {'form': form})
 
 
 
@@ -116,7 +116,7 @@ def resource_detail(request, pk):
     else:
         form = CommentForm()
 
-    return render(request, 'detail.html', {
+    return render(request, 'resources/detail.html', {
         'resource': resource,
         'comments': comments,
         'comment_form': form,
@@ -155,7 +155,7 @@ def delete_resource(request, pk):
 @staff_member_required
 def pending_resources(request):
     resources = Resource.objects.filter(is_approved=False)
-    return render(request, 'pending.html', {'resources': resources})
+    return render(request, 'resources/pending.html', {'resources': resources})
 
 @staff_member_required
 def approve_resource(request, pk):
@@ -175,21 +175,6 @@ def toggle_like(request, pk):
     return redirect('resource_detail', pk=pk)
 
 @login_required
-def ProfileDetailView(request):
-    profile, _ = UserProfile.objects.get_or_create(user=request.user)
-
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profile_view')  # یا هر صفحه‌ای که می‌خواهی
-    else:
-        form = ProfileForm(instance=request.user.userprofile, user=request.user)
-
-    return render(request, 'profile.html', {'form': form, 'profile': profile})
-
-
-@login_required
 def Profile(request):
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
@@ -201,7 +186,7 @@ def Profile(request):
     else:
         form = ProfileForm(instance=request.user.userprofile, user=request.user)
 
-    return render(request, 'profile.html', {'form': form, 'profile': profile})
+    return render(request, 'profiles/edit_profile.html', {'form': form, 'profile': profile})
 
 
 @login_required
@@ -242,7 +227,7 @@ def profile_view(request, username):
         'recent_resources': recent_resources,
     }
 
-    return render(request, 'profile_view.html', context)
+    return render(request, 'profiles/profile_view.html', context)
 
 
 @login_required
@@ -257,7 +242,7 @@ def add_skill(request):
             return redirect('profile_view')
     else:
         form = SkillForm()
-    return render(request, 'add_skill.html', {'form': form})
+    return render(request, 'pages/add_skill.html', {'form': form})
 
 
 @login_required
@@ -278,7 +263,7 @@ def add_Achievement(request):
             return redirect('profile_view')
     else:
         form = AchievementForm()
-    return render(request, 'add_achievement.html', {'form': form})
+    return render(request, 'pages/add_achievement.html', {'form': form})
 
 @login_required
 def delete_Achievement(request, achievement_id):
@@ -298,7 +283,7 @@ def add_Certificate(request):
             return redirect('profile_view')
     else:
         form = CertificateForm()
-    return render(request, 'add_certificate.html', {'form': form})
+    return render(request, 'pages/add_certificate.html', {'form': form})
 
 @login_required
 def delete_Certificate(request, certificate_id):
@@ -319,7 +304,7 @@ def add_Education(request):
             return redirect('profile_view')
     else:
         form = EducationForm()
-    return render(request, 'add_education.html', {'form': form})
+    return render(request, 'pages/add_education.html', {'form': form})
 
 @login_required
 def delete_Education(request, education_id):
@@ -329,19 +314,19 @@ def delete_Education(request, education_id):
 
 
 def about(request):
-    return render(request, 'about.html')
+    return render(request, 'pages/about.html')
 
 def contact(request):
-    return render(request, 'contact.html')
+    return render(request, 'pages/contact.html')
 
 def terms(request):
-    return render(request, 'terms.html')
+    return render(request, 'pages/terms.html')
 
 def privacy(request):
-    return render(request, 'privacy.html')
+    return render(request, 'pages/privacy.html')
 
 def copyright(request):
-    return render(request, 'copyright.html')
+    return render(request, 'pages/copyright.html')
 
 def report(request):
-    return render(request, 'report.html')
+    return render(request, 'pages/report.html')
