@@ -50,7 +50,6 @@ def signup(request):
 @login_required
 def upload_resource(request):
     if request.method == 'POST':
-        print('here is post')
         form = ResourceForm(request.POST, request.FILES)
         if form.is_valid():
             resource = form.save(commit=False)
@@ -58,25 +57,15 @@ def upload_resource(request):
             resource.save()
             form.save_m2m()
 
-            # دریافت همه فایل‌ها
-            print('here is files')
             files = form.cleaned_data["files"]
             for f in files:
                 ResourceFile.objects.create(resource=resource, file=f)
-            # اگر می‌خواهید اولین فایل را در فیلد file اصلی هم ذخیره کنید:
-            if files:
-                resource.file = files[0]
-                resource.save(update_fields=['file'])
 
-            # بقیه کدهای مربوط به تگ و مدرس و پیام موفقیت
-            print('here is form')
             tags_input = request.POST.get('tags', '').strip()
-            print('tags_input:', tags_input)
             if tags_input:
                 tag_names = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
                 for tag_name in tag_names:
                     tag, created = Tag.objects.get_or_create(name=tag_name)
-                    print('adding tag:', tag_name)
                     resource.tags.add(tag)
             instructor_name = request.POST.get('instructor_name', '').strip()
             if instructor_name:

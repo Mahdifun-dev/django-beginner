@@ -7,7 +7,6 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path("", views.resource_list, name="home"),
     path("resources/list", views.resource_list, name="resources_list"),
-    path("accounts/signup/", views.signup, name="signup"),
     path("upload/", views.upload_resource, name="upload_resource"),
     path('resources/<int:pk>/', views.resource_detail, name='resources_detail'),
     path('resources/<int:pk>/edit/', views.edit_resource, name='resources_edit'),
@@ -15,9 +14,12 @@ urlpatterns = [
     path('resources/pending/', views.pending_resources, name='resources_pending'),
     path('resources/<int:pk>/approve/', views.approve_resource, name='resources_approve'),
     path('resources/<int:pk>/like/', views.toggle_like, name='toggle_like'),
-    path('accounts/profile/', views.ProfileDetailView, name='profile_view'),
+
+    path("accounts/signup/", views.signup, name="signup"),
+
     path('accounts/profile/', views.Profile, name='profile_view'),
     path('accounts/profile/<str:username>/', views.profile_view, name='other_profile_view'),
+
     path('profile/add-skill/', views.add_skill, name='add_skill'),
     path('skills/<int:skill_id>/delete/', views.delete_skill, name='delete_skill'),
     path('achievements/add/', views.add_Achievement, name='add_achievement'),
@@ -26,6 +28,7 @@ urlpatterns = [
     path('certificates/<int:certificate_id>/delete/', views.delete_Certificate, name='delete_certificate'),
     path('educations/add/', views.add_Education, name='add_education'),
     path('educations/<int:education_id>/delete/', views.delete_Education, name='delete_education'),
+
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path('terms/', views.terms, name='terms'),
