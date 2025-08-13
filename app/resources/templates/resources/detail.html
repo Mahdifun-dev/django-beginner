@@ -1,690 +1,150 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>جزئیات منبع - آموزش برنامه‌نویسی پایتون</title>
-    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#3B82F6",
-              secondary: "#10B981",
-            },
-            borderRadius: {
-              none: "0px",
-              sm: "4px",
-              DEFAULT: "8px",
-              md: "12px",
-              lg: "16px",
-              xl: "20px",
-              "2xl": "24px",
-              "3xl": "32px",
-              full: "9999px",
-              button: "8px",
-            },
-          },
-        },
-      };
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      :where([class^="ri-"])::before { content: "\f3c2"; }
-      body { font-family: 'Vazirmatn', sans-serif; }
-      .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
-      .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-      .comment-item { border-bottom: 1px solid #f3f4f6; }
-      .comment-item:last-child { border-bottom: none; }
-    </style>
-  </head>
-  <body class="bg-gray-50">
-    <div class="min-h-screen">
-      <header class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between h-16">
-            <div class="flex items-center space-x-4 space-x-reverse">
-              <div class="font-['Pacifico'] text-xl text-primary">logo</div>
-              <nav
-                class="hidden md:flex items-center space-x-6 space-x-reverse mr-8"
-              >
-                <a
-                  href="#"
-                  class="text-gray-700 hover:text-primary transition-colors"
-                  >خانه</a
-                >
-                <a
-                  href="#"
-                  class="text-gray-700 hover:text-primary transition-colors"
-                  >دوره‌ها</a
-                >
-                <a
-                  href="#"
-                  class="text-gray-700 hover:text-primary transition-colors"
-                  >منابع</a
-                >
-                <a
-                  href="#"
-                  class="text-gray-700 hover:text-primary transition-colors"
-                  >وبلاگ</a
-                >
-              </nav>
-            </div>
-            <div class="flex items-center space-x-4 space-x-reverse">
-              <div class="relative">
-                <input
-                  type="text"
-                  placeholder="جستجو..."
-                  class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-                <div
-                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 flex items-center justify-center"
-                >
-                  <i class="ri-search-line text-gray-400"></i>
-                </div>
-              </div>
-              <div
-                class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"
-              >
-                <i class="ri-user-line text-gray-600"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+{% extends "base.html" %}
 
-      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <nav
-          class="flex items-center space-x-2 space-x-reverse text-sm text-gray-500 mb-6"
-        >
-          <a href="#" class="hover:text-primary">خانه</a>
-          <i class="ri-arrow-left-s-line"></i>
-          <a href="#" class="hover:text-primary">برنامه‌نویسی</a>
-          <i class="ri-arrow-left-s-line"></i>
-          <span class="text-gray-900">آموزش پایتون پیشرفته</span>
-        </nav>
+{% block title %}{{ resource.title }} - {{ resource.category.name }}{% endblock %}
+
+{% block content %}
+<nav class="flex items-center space-x-2 space-x-reverse text-sm text-gray-500 mb-6">
+    <a href="{% url 'home' %}" class="hover:text-primary">خانه</a>
+    <i class="ri-arrow-left-s-line"></i>
+    <a href="#" class="hover:text-primary">{{ resource.category.name }}</a>
+    <i class="ri-arrow-left-s-line"></i>
+    <span class="text-gray-900">{{ resource.title }}</span>
+</nav>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div class="lg:col-span-2">
             <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-              <div class="video-container bg-black">
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="text-center text-white">
-                    <div
-                      class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4"
-                    >
-                      <i class="ri-play-fill text-2xl"></i>
-                    </div>
-                    <p class="text-lg">آموزش برنامه‌نویسی پایتون - بخش اول</p>
-                    <p class="text-sm opacity-75">مدت زمان: ۴۵ دقیقه</p>
-                  </div>
-                </div>
-              </div>
+    {% with video_files=files.all|slice:":1" %} {# Get the first file to check if it's a video #}
+        {% if video_files and video_files.0.file.url|slice:"-4"|lower in ".mp4.webm" %}
+            <div class="video-container bg-black">
+                <video controls poster="{{ resource.thumbnail.url|default:'' }}" class="w-full h-full">
+                    <source src="{{ video_files.0.file.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        {% else %}
+            <div class="relative bg-black" style="padding-bottom: 56.25%;">
+                <img src="{{ resource.thumbnail.url|default:'/static/placeholder.jpg' }}" alt="{{ resource.title }}" class="absolute inset-0 w-full h-full object-cover">
+            </div>
+        {% endif %}
+    {% endwith %}
 
-              <div class="p-6">
-                <div class="flex items-center justify-between mb-4">
-                  <h1 class="text-2xl font-bold text-gray-900">
-                    آموزش برنامه‌نویسی پایتون - ساختارهای داده پیشرفته
-                  </h1>
-                  <div class="flex items-center space-x-2 space-x-reverse">
-                    <button
-                      class="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors !rounded-button whitespace-nowrap"
-                    >
-                      <div class="w-5 h-5 flex items-center justify-center">
-                        <i class="ri-heart-line"></i>
-                      </div>
-                    </button>
-                    <button
-                      class="p-2 text-gray-500 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors !rounded-button whitespace-nowrap"
-                    >
-                      <div class="w-5 h-5 flex items-center justify-center">
-                        <i class="ri-bookmark-line"></i>
-                      </div>
-                    </button>
-                    <button
-                      class="p-2 text-gray-500 hover:text-green-500 hover:bg-green-50 rounded-lg transition-colors !rounded-button whitespace-nowrap"
-                    >
-                      <div class="w-5 h-5 flex items-center justify-center">
-                        <i class="ri-share-line"></i>
-                      </div>
-                    </button>
-                    <button
-                      class="p-2 text-gray-500 hover:text-yellow-500 hover:bg-yellow-50 rounded-lg transition-colors !rounded-button whitespace-nowrap"
-                    >
-                      <div class="w-5 h-5 flex items-center justify-center">
-                        <i class="ri-edit-line"></i>
-                      </div>
-                    </button>
-                    <button
-                      class="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors !rounded-button whitespace-nowrap"
-                    >
-                      <div class="w-5 h-5 flex items-center justify-center">
-                        <i class="ri-delete-bin-line"></i>
-                      </div>
-                    </button>
-                  </div>
-                </div>
+    <div class="p-6">
+<div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold text-gray-900">{{ resource.title }}</h1>
+    <div class="flex items-center space-x-2 space-x-reverse">
+        <form action="{% url 'toggle_like' resource.pk %}" method="post" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="p-2 {% if is_liked %}text-red-500{% else %}text-gray-500{% endif %} hover:bg-red-50 rounded-lg transition-colors">
+                <i class="ri-heart-{% if is_liked %}fill{% else %}line{% endif %}"></i>
+            </button>
+        </form>
+        
+        {% if is_owner %}
+            <a href="{% url 'resources_edit' resource.pk %}" class="p-2 text-gray-500 hover:text-yellow-500 hover:bg-yellow-50 rounded-lg transition-colors">
+                <i class="ri-edit-line"></i>
+            </a>
+            <a href="{% url 'resources_delete' resource.pk %}" class="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                <i class="ri-delete-bin-line"></i>
+            </a>
+        {% endif %}
+    </div>
+</div><div class="flex items-center space-x-6 space-x-reverse text-sm text-gray-500 mb-6">
+    <div class="flex items-center space-x-2 space-x-reverse">
+        <i class="ri-eye-line"></i>
+        <span>{{ resource.view_count }} بازدید</span>
+    </div>
+    <div class="flex items-center space-x-2 space-x-reverse">
+        <i class="ri-calendar-line"></i>
+        <span>{{ resource.uploaded_at|date:"Y/m/d" }}</span>
+    </div>
+</div>
 
-                <div
-                  class="flex items-center space-x-6 space-x-reverse text-sm text-gray-500 mb-6"
-                >
-                  <div class="flex items-center space-x-2 space-x-reverse">
-                    <div class="w-4 h-4 flex items-center justify-center">
-                      <i class="ri-eye-line"></i>
-                    </div>
-                    <span>۱,۲۳۴ بازدید</span>
-                  </div>
-                  <div class="flex items-center space-x-2 space-x-reverse">
-                    <div class="w-4 h-4 flex items-center justify-center">
-                      <i class="ri-calendar-line"></i>
-                    </div>
-                    <span>۱۴۰۳/۰۴/۲۳</span>
-                  </div>
-                  <div class="flex items-center space-x-2 space-x-reverse">
-                    <div class="w-4 h-4 flex items-center justify-center">
-                      <i class="ri-time-line"></i>
-                    </div>
-                    <span>۴۵ دقیقه</span>
-                  </div>
-                </div>
-
-                <div
-                  class="flex items-center space-x-4 space-x-reverse mb-6 p-4 bg-gray-50 rounded-lg"
-                >
-                  <img
-                    src="https://readdy.ai/api/search-image?query=professional%20male%20instructor%20with%20glasses%20and%20friendly%20smile%2C%20clean%20background%2C%20portrait%20style%2C%20modern%20lighting&width=64&height=64&seq=instructor1&orientation=squarish"
-                    alt="مدرس"
-                    class="w-12 h-12 rounded-full object-cover object-top"
-                  />
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900">دکتر علی محمدی</h3>
-                    <p class="text-sm text-gray-600">
-                      مدرس برنامه‌نویسی و مهندسی نرم‌افزار
-                    </p>
-                  </div>
-                  <button
-                    class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors !rounded-button whitespace-nowrap"
-                  >
-                    دنبال کردن
-                  </button>
-                </div>
+<div class="flex items-center space-x-4 space-x-reverse mb-6 p-4 bg-gray-50 rounded-lg">
+    <a href="{% url 'profile_view' resource.uploader.username %}">
+        <img src="{{ resource.uploader.userprofile.profile_picture.url|default:'/static/default_avatar.png' }}" alt="{{ resource.uploader.username }}" class="w-12 h-12 rounded-full object-cover">
+    </a>
+    <div class="flex-1">
+        <a href="{% url 'profile_view' resource.uploader.username %}" class="font-semibold text-gray-900">{{ resource.uploader.get_full_name|default:resource.uploader.username }}</a>
+        <p class="text-sm text-gray-600">ارسال کننده منبع</p>
+    </div>
+</div>
                 <div class="mb-6">
                   <h3 class="font-semibold text-gray-900 mb-3">توضیحات</h3>
                   <p class="text-gray-700 leading-relaxed mb-4">
-                    در این ویدیو آموزشی، به بررسی ساختارهای داده پیشرفته در زبان
-                    برنامه‌نویسی پایتون می‌پردازیم. شما با مفاهیم Dictionary،
-                    Set، Tuple و کاربردهای عملی آن‌ها آشنا خواهید شد.
-                  </p>
-                  <p class="text-gray-700 leading-relaxed">
-                    این دوره مناسب برای برنامه‌نویسان مبتدی تا متوسط است که
-                    می‌خواهند مهارت‌های خود را در زمینه ساختارهای داده ارتقا
-                    دهند.
+                    {{ resource.description }}
                   </p>
                 </div>
 
                 <div class="mb-6">
                   <h3 class="font-semibold text-gray-900 mb-3">برچسب‌ها</h3>
                   <div class="flex flex-wrap gap-2">
+                    {% for tag in resource.tags.all %}
                     <span
                       class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                      >پایتون</span
+                      >{{ tag.name }}</span
                     >
-                    <span
-                      class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm"
-                      >ساختار داده</span
-                    >
-                    <span
-                      class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm"
-                      >برنامه‌نویسی</span
-                    >
-                    <span
-                      class="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm"
-                      >آموزش</span
-                    >
+                    {% endfor %}
                   </div>
                 </div>
               </div>
             </div>
             <div class="bg-white rounded-xl shadow-sm mt-6 p-6">
-              <h3 class="font-semibold text-gray-900 mb-4">نظرات (۱۲)</h3>
+    <h3 class="font-semibold text-gray-900 mb-4">نظرات ({{ comments.count }})</h3>
 
-              <div class="mb-6">
-                <textarea
-                  placeholder="نظر خود را بنویسید..."
-                  class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
-                  rows="3"
-                ></textarea>
-                <div class="flex justify-end mt-3">
-                  <button
-                    class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors !rounded-button whitespace-nowrap"
-                  >
-                    ارسال نظر
-                  </button>
-                </div>
-              </div>
-
-              <div class="space-y-4">
-                <div class="comment-item pb-4">
-                  <div class="flex items-start space-x-3 space-x-reverse">
-                    <img
-                      src="https://readdy.ai/api/search-image?query=young%20woman%20with%20hijab%20smiling%2C%20professional%20headshot%2C%20clean%20background&width=40&height=40&seq=user1&orientation=squarish"
-                      alt="کاربر"
-                      class="w-10 h-10 rounded-full object-cover object-top"
-                    />
-                    <div class="flex-1">
-                      <div
-                        class="flex items-center space-x-2 space-x-reverse mb-1"
-                      >
-                        <h4 class="font-medium text-gray-900">فاطمه احمدی</h4>
-                        <span class="text-sm text-gray-500">۲ روز پیش</span>
-                      </div>
-                      <p class="text-gray-700 mb-2">
-                        آموزش بسیار مفیدی بود. توضیحات خیلی واضح و قابل فهم
-                        ارائه شده. ممنون از زحمات شما.
-                      </p>
-                      <div class="flex items-center space-x-4 space-x-reverse">
-                        <button
-                          class="text-sm text-gray-500 hover:text-primary transition-colors flex items-center space-x-1 space-x-reverse"
-                        >
-                          <div class="w-4 h-4 flex items-center justify-center">
-                            <i class="ri-thumb-up-line"></i>
-                          </div>
-                          <span>۵</span>
-                        </button>
-                        <button
-                          class="text-sm text-gray-500 hover:text-primary transition-colors"
-                        >
-                          پاسخ
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="comment-item pb-4">
-                  <div class="flex items-start space-x-3 space-x-reverse">
-                    <img
-                      src="https://readdy.ai/api/search-image?query=middle%20aged%20man%20with%20beard%2C%20professional%20headshot%2C%20clean%20background&width=40&height=40&seq=user2&orientation=squarish"
-                      alt="کاربر"
-                      class="w-10 h-10 rounded-full object-cover object-top"
-                    />
-                    <div class="flex-1">
-                      <div
-                        class="flex items-center space-x-2 space-x-reverse mb-1"
-                      >
-                        <h4 class="font-medium text-gray-900">محمد رضایی</h4>
-                        <span class="text-sm text-gray-500">۳ روز پیش</span>
-                      </div>
-                      <p class="text-gray-700 mb-2">
-                        ممکن است بخش مربوط به Dictionary را بیشتر توضیح دهید؟
-                        کمی سریع گذشتید از روی آن.
-                      </p>
-                      <div class="flex items-center space-x-4 space-x-reverse">
-                        <button
-                          class="text-sm text-gray-500 hover:text-primary transition-colors flex items-center space-x-1 space-x-reverse"
-                        >
-                          <div class="w-4 h-4 flex items-center justify-center">
-                            <i class="ri-thumb-up-line"></i>
-                          </div>
-                          <span>۲</span>
-                        </button>
-                        <button
-                          class="text-sm text-gray-500 hover:text-primary transition-colors"
-                        >
-                          پاسخ
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="comment-item pb-4">
-                  <div class="flex items-start space-x-3 space-x-reverse">
-                    <img
-                      src="https://readdy.ai/api/search-image?query=young%20man%20with%20glasses%2C%20student%20appearance%2C%20clean%20background&width=40&height=40&seq=user3&orientation=squarish"
-                      alt="کاربر"
-                      class="w-10 h-10 rounded-full object-cover object-top"
-                    />
-                    <div class="flex-1">
-                      <div
-                        class="flex items-center space-x-2 space-x-reverse mb-1"
-                      >
-                        <h4 class="font-medium text-gray-900">امیر حسینی</h4>
-                        <span class="text-sm text-gray-500">۱ هفته پیش</span>
-                      </div>
-                      <p class="text-gray-700 mb-2">
-                        عالی بود! کد‌های نمونه خیلی کمک کرد تا مطالب رو بهتر درک
-                        کنم.
-                      </p>
-                      <div class="flex items-center space-x-4 space-x-reverse">
-                        <button
-                          class="text-sm text-gray-500 hover:text-primary transition-colors flex items-center space-x-1 space-x-reverse"
-                        >
-                          <div class="w-4 h-4 flex items-center justify-center">
-                            <i class="ri-thumb-up-line"></i>
-                          </div>
-                          <span>۸</span>
-                        </button>
-                        <button
-                          class="text-sm text-gray-500 hover:text-primary transition-colors"
-                        >
-                          پاسخ
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-6 text-center">
-                <button
-                  class="text-primary hover:text-blue-600 transition-colors"
-                >
-                  مشاهده همه نظرات
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl shadow-sm p-6 sticky top-6">
-              <h3 class="font-semibold text-gray-900 mb-4">منابع پیشنهادی</h3>
-
-              <div class="space-y-4">
-                <div
-                  class="flex items-start space-x-3 space-x-reverse p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
-                >
-                  <img
-                    src="https://readdy.ai/api/search-image?query=python%20programming%20code%20on%20computer%20screen%2C%20clean%20modern%20workspace%2C%20programming%20tutorial%20thumbnail&width=80&height=60&seq=thumb1&orientation=landscape"
-                    alt="ویدیو"
-                    class="w-20 h-15 rounded object-cover object-top"
-                  />
-                  <div class="flex-1 min-w-0">
-                    <h4
-                      class="font-medium text-gray-900 text-sm line-clamp-2 mb-1"
-                    >
-                      آموزش حلقه‌ها در پایتون
-                    </h4>
-                    <p class="text-xs text-gray-500 mb-1">دکتر علی محمدی</p>
-                    <div
-                      class="flex items-center space-x-2 space-x-reverse text-xs text-gray-500"
-                    >
-                      <span>۳۲ دقیقه</span>
-                      <span>•</span>
-                      <span>۹۸۷ بازدید</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="flex items-start space-x-3 space-x-reverse p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
-                >
-                  <img
-                    src="https://readdy.ai/api/search-image?query=object%20oriented%20programming%20concepts%2C%20python%20classes%20and%20objects%2C%20educational%20thumbnail&width=80&height=60&seq=thumb2&orientation=landscape"
-                    alt="ویدیو"
-                    class="w-20 h-15 rounded object-cover object-top"
-                  />
-                  <div class="flex-1 min-w-0">
-                    <h4
-                      class="font-medium text-gray-900 text-sm line-clamp-2 mb-1"
-                    >
-                      برنامه‌نویسی شی‌گرا در پایتون
-                    </h4>
-                    <p class="text-xs text-gray-500 mb-1">دکتر سارا کریمی</p>
-                    <div
-                      class="flex items-center space-x-2 space-x-reverse text-xs text-gray-500"
-                    >
-                      <span>۵۸ دقیقه</span>
-                      <span>•</span>
-                      <span>۱,۴۵۶ بازدید</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="flex items-start space-x-3 space-x-reverse p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
-                >
-                  <img
-                    src="https://readdy.ai/api/search-image?query=python%20functions%20and%20modules%2C%20programming%20tutorial%2C%20code%20editor%20screenshot&width=80&height=60&seq=thumb3&orientation=landscape"
-                    alt="ویدیو"
-                    class="w-20 h-15 rounded object-cover object-top"
-                  />
-                  <div class="flex-1 min-w-0">
-                    <h4
-                      class="font-medium text-gray-900 text-sm line-clamp-2 mb-1"
-                    >
-                      توابع و ماژول‌ها در پایتون
-                    </h4>
-                    <p class="text-xs text-gray-500 mb-1">دکتر علی محمدی</p>
-                    <div
-                      class="flex items-center space-x-2 space-x-reverse text-xs text-gray-500"
-                    >
-                      <span>۴۱ دقیقه</span>
-                      <span>•</span>
-                      <span>۷۲۳ بازدید</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="flex items-start space-x-3 space-x-reverse p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
-                >
-                  <img
-                    src="https://readdy.ai/api/search-image?query=python%20file%20handling%20and%20input%20output%2C%20programming%20tutorial%2C%20code%20examples&width=80&height=60&seq=thumb4&orientation=landscape"
-                    alt="ویدیو"
-                    class="w-20 h-15 rounded object-cover object-top"
-                  />
-                  <div class="flex-1 min-w-0">
-                    <h4
-                      class="font-medium text-gray-900 text-sm line-clamp-2 mb-1"
-                    >
-                      کار با فایل‌ها در پایتون
-                    </h4>
-                    <p class="text-xs text-gray-500 mb-1">دکتر حسن نوری</p>
-                    <div
-                      class="flex items-center space-x-2 space-x-reverse text-xs text-gray-500"
-                    >
-                      <span>۳۶ دقیقه</span>
-                      <span>•</span>
-                      <span>۶۴۲ بازدید</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="flex items-start space-x-3 space-x-reverse p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
-                >
-                  <img
-                    src="https://readdy.ai/api/search-image?query=python%20error%20handling%20and%20debugging%2C%20programming%20tutorial%2C%20exception%20handling&width=80&height=60&seq=thumb5&orientation=landscape"
-                    alt="ویدیو"
-                    class="w-20 h-15 rounded object-cover object-top"
-                  />
-                  <div class="flex-1 min-w-0">
-                    <h4
-                      class="font-medium text-gray-900 text-sm line-clamp-2 mb-1"
-                    >
-                      مدیریت خطا در پایتون
-                    </h4>
-                    <p class="text-xs text-gray-500 mb-1">دکتر مریم احمدی</p>
-                    <div
-                      class="flex items-center space-x-2 space-x-reverse text-xs text-gray-500"
-                    >
-                      <span>۲۹ دقیقه</span>
-                      <span>•</span>
-                      <span>۵۸۹ بازدید</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="mt-6">
-                <button
-                  class="w-full text-primary hover:text-blue-600 transition-colors text-sm font-medium"
-                >
-                  مشاهده همه منابع
-                </button>
-              </div>
-            </div>
-          </div>
+    {% if user.is_authenticated %}
+    <form method="post" class="mb-6">
+        {% csrf_token %}
+        {{ comment_form.text }}
+        <div class="flex justify-end mt-3">
+            <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors">ارسال نظر</button>
         </div>
+    </form>
+    {% else %}
+    <p class="mb-6 text-center">برای ثبت نظر باید <a href="{% url 'login' %}" class="text-primary font-semibold">وارد شوید</a>.</p>
+    {% endif %}
 
-        <div class="mt-12">
-          <h2 class="text-xl font-bold text-gray-900 mb-6">منابع مرتبط</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div
-              class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-            >
-              <img
-                src="https://readdy.ai/api/search-image?query=python%20web%20development%20with%20django%20framework%2C%20programming%20tutorial%2C%20web%20application%20development&width=300&height=200&seq=related1&orientation=landscape"
-                alt="ویدیو"
-                class="w-full h-48 object-cover object-top"
-              />
-              <div class="p-4">
-                <h3 class="font-medium text-gray-900 mb-2 line-clamp-2">
-                  توسعه وب با Django
-                </h3>
-                <p class="text-sm text-gray-600 mb-3">دکتر رضا موسوی</p>
-                <div
-                  class="flex items-center justify-between text-sm text-gray-500"
-                >
-                  <span>۱ ساعت ۲۳ دقیقه</span>
-                  <div class="flex items-center space-x-2 space-x-reverse">
-                    <button
-                      class="text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <div class="w-4 h-4 flex items-center justify-center">
-                        <i class="ri-heart-line"></i>
-                      </div>
-                    </button>
-                    <button
-                      class="text-gray-400 hover:text-blue-500 transition-colors"
-                    >
-                      <div class="w-4 h-4 flex items-center justify-center">
-                        <i class="ri-bookmark-line"></i>
-                      </div>
-                    </button>
-                  </div>
+    <div class="space-y-4">
+        {% for comment in comments %}
+        <div class="comment-item pb-4">
+            <div class="flex items-start space-x-3 space-x-reverse">
+                <img src="{{ comment.user.userprofile.profile_picture.url|default:'/static/default_avatar.png' }}" alt="{{ comment.user.username }}" class="w-10 h-10 rounded-full object-cover">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-2 space-x-reverse mb-1">
+                        <h4 class="font-medium text-gray-900">{{ comment.user.username }}</h4>
+                        <span class="text-sm text-gray-500">{{ comment.created_at|timesince }} پیش</span>
+                    </div>
+                    <p class="text-gray-700 mb-2">{{ comment.text|linebreaks }}</p>
                 </div>
-              </div>
             </div>
-            <div
-              class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-            >
-              <img
-                src="https://readdy.ai/api/search-image?query=python%20data%20analysis%20with%20pandas%20and%20numpy%2C%20data%20science%20tutorial%2C%20charts%20and%20graphs&width=300&height=200&seq=related2&orientation=landscape"
-                alt="ویدیو"
-                class="w-full h-48 object-cover object-top"
-              />
-              <div class="p-4">
-                <h3 class="font-medium text-gray-900 mb-2 line-clamp-2">
-                  تحلیل داده با Pandas
-                </h3>
-                <p class="text-sm text-gray-600 mb-3">دکتر لیلا حسینی</p>
-                <div
-                  class="flex items-center justify-between text-sm text-gray-500"
-                >
-                  <span>۵۲ دقیقه</span>
-                  <div class="flex items-center space-x-2 space-x-reverse">
-                    <button
-                      class="text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <div class="w-4 h-4 flex items-center justify-center">
-                        <i class="ri-heart-line"></i>
-                      </div>
-                    </button>
-                    <button
-                      class="text-gray-400 hover:text-blue-500 transition-colors"
-                    >
-                      <div class="w-4 h-4 flex items-center justify-center">
-                        <i class="ri-bookmark-line"></i>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-            >
-              <img
-                src="https://readdy.ai/api/search-image?query=python%20machine%20learning%20basics%2C%20artificial%20intelligence%20tutorial%2C%20algorithms%20and%20models&width=300&height=200&seq=related3&orientation=landscape"
-                alt="ویدیو"
-                class="w-full h-48 object-cover object-top"
-              />
-              <div class="p-4">
-                <h3 class="font-medium text-gray-900 mb-2 line-clamp-2">
-                  مبانی یادگیری ماشین
-                </h3>
-                <p class="text-sm text-gray-600 mb-3">دکتر امیر کریمی</p>
-                <div
-                  class="flex items-center justify-between text-sm text-gray-500"
-                >
-                  <span>۱ ساعت ۴۷ دقیقه</span>
-                  <div class="flex items-center space-x-2 space-x-reverse">
-                    <button
-                      class="text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <div class="w-4 h-4 flex items-center justify-center">
-                        <i class="ri-heart-line"></i>
-                      </div>
-                    </button>
-                    <button
-                      class="text-gray-400 hover:text-blue-500 transition-colors"
-                    >
-                      <div class="w-4 h-4 flex items-center justify-center">
-                        <i class="ri-bookmark-line"></i>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-            >
-              <img
-                src="https://readdy.ai/api/search-image?query=python%20automation%20and%20scripting%2C%20task%20automation%2C%20programming%20productivity&width=300&height=200&seq=related4&orientation=landscape"
-                alt="ویدیو"
-                class="w-full h-48 object-cover object-top"
-              />
-              <div class="p-4">
-                <h3 class="font-medium text-gray-900 mb-2 line-clamp-2">
-                  اتوماسیون با پایتون
-                </h3>
-                <p class="text-sm text-gray-600 mb-3">دکتر فرهاد نجفی</p>
-                <div
-                  class="flex items-center justify-between text-sm text-gray-500"
-                >
-                  <span>۳۸ دقیقه</span>
-                  <div class="flex items-center space-x-2 space-x-reverse">
-                    <button
-                      class="text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <div class="w-4 h-4 flex items-center justify-center">
-                        <i class="ri-heart-line"></i>
-                      </div>
-                    </button>
-                    <button
-                      class="text-gray-400 hover:text-blue-500 transition-colors"
-                    >
-                      <div class="w-4 h-4 flex items-center justify-center">
-                        <i class="ri-bookmark-line"></i>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+        </div>
+        {% empty %}
+        <p class="text-gray-500">هنوز نظری ثبت نشده است. اولین نفر باشید!</p>
+        {% endfor %}
+    </div>
+</div>
           </div>
+            <div class="lg:col-span-1">
+    <div class="bg-white rounded-xl shadow-sm p-6 sticky top-6">
+        <h3 class="font-semibold text-gray-900 mb-4">منابع پیشنهادی</h3>
+        <div class="space-y-4">
+            {% for related in related_resources %}
+                <a href="{% url 'resources_detail' related.pk %}" class="flex items-start space-x-3 space-x-reverse p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <img src="{{ related.thumbnail.url }}" alt="{{ related.title }}" class="w-20 h-15 rounded object-cover">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-medium text-gray-900 text-sm line-clamp-2 mb-1">{{ related.title }}</h4>
+                        <p class="text-xs text-gray-500 mb-1">{{ related.uploader.username }}</p>
+                        <div class="flex items-center space-x-2 space-x-reverse text-xs text-gray-500">
+                            <span>{{ related.view_count }} بازدید</span>
+                        </div>
+                    </div>
+                </a>
+            {% empty %}
+                <p class="text-sm text-gray-500">منبع مرتبطی یافت نشد.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
         </div>
       </main>
     </div>
@@ -765,5 +225,4 @@
           });
       });
     </script>
-  </body>
-</html>
+    {% endblock content %}

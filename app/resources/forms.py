@@ -1,5 +1,5 @@
 from django import forms
-from .models import Resource, Comment, Skill, Achievement, Certificate, UserProfile, Education
+from .models import Resource, Comment, Skill, Achievement, Certificate, UserProfile, Education, Tag
 from django.contrib.auth.models import User
 
 
@@ -71,9 +71,20 @@ class ResourceForm(forms.ModelForm):
             'id': 'file-input'  # A nice, specific ID for our JavaScript
         })
     )
+    tags_input = forms.CharField(
+        label="برچسب‌ها (جدا شده با ویرگول)",
+        required=False,
+        help_text="کلمات کلیدی را با ویرگول (,) از هم جدا کنید.",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+                'placeholder': 'مثال: پایتون, جنگو, rest-api'
+            }
+        )
+    )
     class Meta:
         model = Resource
-        fields = ["title", "description", "category", "tags", "instructor_name", "external_url", "privacy", "file_type", "thumbnail"]
+        fields = ["title", "description", "category", "instructor_name", "external_url", "privacy", "file_type", "thumbnail"]
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
@@ -105,10 +116,6 @@ class ResourceForm(forms.ModelForm):
             'privacy': forms.Select(attrs={
                 'class': 'hidden'
             }),
-            'tags': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
-                'placeholder': 'مثال: پایتون، کنکور، نهم'
-            })
         }
 
     def __init__(self, *args, **kwargs):
@@ -120,6 +127,46 @@ class ResourceForm(forms.ModelForm):
         self.fields['thumbnail'].required = False
         self.fields['external_url'].required = False
         self.fields['instructor_name'].required = False
+        if self.instance and self.instance.pk:
+            # Get existing tags and join them into a single string
+            existing_tags = self.instance.tags.all()
+            self.fields['tags_input'].initial = ', '.join(tag.name for tag in existing_tags)
+
+    def save(self, user=None, commit=True):
+        # --- START DEBUGGING ---
+        print("--- 1. INSIDE FORM SAVE METHOD ---")
+        resource = super().save(commit=False)
+
+        if user:
+            resource.uploader = user
+            print("--- 2. Uploader assigned ---")
+
+        if commit:
+            resource.save()
+            print("--- 3. Main resource object SAVED ---")
+            
+            # Now let's check the tag data
+            tags_input_string = self.cleaned_data.get('tags_input', '').strip()
+            print(f"--- 4. Raw tags_input string from form: '{tags_input_string}' ---")
+
+            resource.tags.clear()
+            
+            if tags_input_string:
+                tag_names = [tag.strip() for tag in tags_input_string.split(',') if tag.strip()]
+                print(f"--- 5. Parsed tag names list: {tag_names} ---")
+                
+                for tag_name in tag_names:
+                    tag, created = Tag.objects.get_or_create(name=tag_name)
+                    resource.tags.add(tag)
+                    print(f"--- 6. ADDED tag to resource: '{tag.name}' (Was it created new? {created}) ---")
+            else:
+                print("--- 5/6. No tags_input string found. SKIPPING tag logic. ---")
+        else:
+            print("--- 3. Commit is False. SKIPPING database save and tag logic. ---")
+        # --- END DEBUGGING ---
+        
+        return resource
+
 
 
 class CommentForm(forms.ModelForm):

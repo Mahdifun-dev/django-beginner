@@ -8,7 +8,7 @@
             <h2 class="text-xl font-bold mb-4 text-gray-800">ویدیوهای برگزیده</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {% for resource in resources %}
-                <div class="video-thumbnail group">
+                <a href="{% url 'resources_detail' resource.id %}" class="video-thumbnail group">
                   <div class="relative rounded-lg overflow-hidden">
                     <img
                       src="{{ resource.thumbnail.url }}"
@@ -34,7 +34,7 @@
                       <span>{{ resource.uploaded_at|timesince }} پیش</span>
                     </div>
                   </div>
-                </div>
+                </a>
               {% empty %}
                 <p>ویدیویی برای نمایش وجود ندارد.</p>
               {% endfor %}

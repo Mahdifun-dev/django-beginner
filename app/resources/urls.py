@@ -2,7 +2,6 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("", views.resource_list, name="home"),
@@ -17,8 +16,8 @@ urlpatterns = [
 
     path("accounts/signup/", views.signup, name="signup"),
 
-    path('accounts/profile/', views.Profile, name='profile_view'),
-    path('accounts/profile/<str:username>/', views.profile_view, name='other_profile_view'),
+    path('accounts/profile/', views.Profile, name='profile'),
+    path('accounts/profile/<str:username>/', views.profile_view, name='profile_view'),
 
     path('profile/add-skill/', views.add_skill, name='add_skill'),
     path('skills/<int:skill_id>/delete/', views.delete_skill, name='delete_skill'),

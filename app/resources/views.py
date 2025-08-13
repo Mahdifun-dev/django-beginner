@@ -52,25 +52,11 @@ def upload_resource(request):
     if request.method == 'POST':
         form = ResourceForm(request.POST, request.FILES)
         if form.is_valid():
-            resource = form.save(commit=False)
-            resource.uploader = request.user
-            resource.save()
-            form.save_m2m()
+            resource = form.save(user=request.user)
 
             files = form.cleaned_data["files"]
             for f in files:
                 ResourceFile.objects.create(resource=resource, file=f)
-
-            tags_input = request.POST.get('tags', '').strip()
-            if tags_input:
-                tag_names = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
-                for tag_name in tag_names:
-                    tag, created = Tag.objects.get_or_create(name=tag_name)
-                    resource.tags.add(tag)
-            instructor_name = request.POST.get('instructor_name', '').strip()
-            if instructor_name:
-                resource.instructor_name = instructor_name
-                resource.save(update_fields=['instructor_name'])
 
             messages.success(request, 'فایل‌ها با موفقیت آپلود شدند و در انتظار تایید هستند.')
             return redirect('upload_resource')
@@ -82,37 +68,56 @@ def upload_resource(request):
 
 
 
-
 def resource_detail(request, pk):
     resource = get_object_or_404(Resource, pk=pk)
 
-    if not resource.is_approved:
-        if not request.user.is_authenticated or (request.user != resource.uploader and not request.user.is_staff):
-            raise Http404("Resource not found.")
-        
-    related_resources = Resource.objects.filter(category=resource.category).exclude(pk=pk)[:4]
-    comments = resource.comments.all().order_by('-created_at')
-    liked = False
+    # Permission check: only show if approved, or if the viewer is the owner or staff
+    if not resource.is_approved and not request.user.is_staff and request.user != resource.uploader:
+        raise Http404("Resource not found or is pending approval.")
 
+    # Increment view count (simple session-based check to prevent multiple counts on refresh)
+    session_key = f'viewed_resource_{resource.pk}'
+    if not request.session.get(session_key, False):
+        resource.view_count += 1
+        resource.save(update_fields=['view_count'])
+        request.session[session_key] = True
+
+    # Get all related data
+    files = resource.files.all()
+    comments = resource.comments.all().order_by('-created_at')
+    related_resources = Resource.objects.filter(category=resource.category, is_approved=True).exclude(pk=pk)[:4]
+
+    # Check user-specific states (owner, liked status)
+    is_owner = request.user == resource.uploader
+    is_liked = False
+    if request.user.is_authenticated:
+        is_liked = resource.likes.filter(pk=request.user.pk).exists()
+
+    # Handle the comment form submission
     if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
+        if not request.user.is_authenticated:
+            return redirect('login') # Or show an error
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
             comment.resource = resource
             comment.user = request.user
             comment.save()
+            messages.success(request, 'Your comment has been posted.')
             return redirect('resource_detail', pk=pk)
     else:
-        form = CommentForm()
+        comment_form = CommentForm()
 
-    return render(request, 'resources/detail.html', {
+    context = {
         'resource': resource,
+        'files': files,
         'comments': comments,
-        'comment_form': form,
+        'comment_form': comment_form,
         'related_resources': related_resources,
-    })
-
-
+        'is_owner': is_owner,
+        'is_liked': is_liked,
+    }
+    return render(request, 'resources/detail.html', context)
 
 @login_required
 def edit_resource(request, pk):
@@ -161,7 +166,7 @@ def toggle_like(request, pk):
         resource.likes.remove(request.user)
     else:
         resource.likes.add(request.user)
-    return redirect('resource_detail', pk=pk)
+    return redirect('resources_detail', pk=pk)
 
 @login_required
 def Profile(request):
@@ -171,7 +176,7 @@ def Profile(request):
         form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('profile_view')  # یا هر صفحه‌ای که می‌خواهی
+            return redirect('profile')  # یا هر صفحه‌ای که می‌خواهی
     else:
         form = ProfileForm(instance=request.user.userprofile, user=request.user)
 
@@ -216,7 +221,7 @@ def profile_view(request, username):
         'recent_resources': recent_resources,
     }
 
-    return render(request, 'profiles/profile_view.html', context)
+    return render(request, 'profiles/profile.html', context)
 
 
 @login_required
@@ -228,7 +233,7 @@ def add_skill(request):
             skill = form.save(commit=False)
             skill.user = profile
             skill.save()
-            return redirect('profile_view')
+            return redirect('profile')
     else:
         form = SkillForm()
     return render(request, 'pages/add_skill.html', {'form': form})
@@ -238,7 +243,7 @@ def add_skill(request):
 def delete_skill(request, skill_id):
     skill = get_object_or_404(Skill, id=skill_id, user=request.user.userprofile)
     skill.delete()
-    return redirect('profile_view') 
+    return redirect('profile') 
 
 @login_required
 def add_Achievement(request):
@@ -249,7 +254,7 @@ def add_Achievement(request):
             achievement = form.save(commit=False)
             achievement.user = profile
             achievement.save()
-            return redirect('profile_view')
+            return redirect('profile')
     else:
         form = AchievementForm()
     return render(request, 'pages/add_achievement.html', {'form': form})
@@ -258,7 +263,7 @@ def add_Achievement(request):
 def delete_Achievement(request, achievement_id):
     achievement = get_object_or_404(Achievement, id=achievement_id, user=request.user.userprofile)
     achievement.delete()
-    return redirect('profile_view')
+    return redirect('profile')
 
 @login_required
 def add_Certificate(request):
@@ -269,7 +274,7 @@ def add_Certificate(request):
             certificate = form.save(commit=False)
             certificate.user = profile
             certificate.save()
-            return redirect('profile_view')
+            return redirect('profile')
     else:
         form = CertificateForm()
     return render(request, 'pages/add_certificate.html', {'form': form})
@@ -278,7 +283,7 @@ def add_Certificate(request):
 def delete_Certificate(request, certificate_id):
     certificate = get_object_or_404(Certificate, id=certificate_id, user=request.user.userprofile)
     certificate.delete()
-    return redirect('profile_view')
+    return redirect('profile')
 
 
 @login_required
@@ -290,7 +295,7 @@ def add_Education(request):
             education = form.save(commit=False)
             education.user = profile
             education.save()
-            return redirect('profile_view')
+            return redirect('profile')
     else:
         form = EducationForm()
     return render(request, 'pages/add_education.html', {'form': form})
@@ -299,7 +304,7 @@ def add_Education(request):
 def delete_Education(request, education_id):
     education = get_object_or_404(Education, id=education_id, user=request.user.userprofile)
     education.delete()
-    return redirect('profile_view')
+    return redirect('profile')
 
 
 def about(request):
